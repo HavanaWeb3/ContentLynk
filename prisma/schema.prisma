@@ -1,0 +1,167 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User Model - Core user information and wallet connection
+model User {
+  id              String         @id @default(cuid())
+  email           String?        @unique
+  walletAddress   String?        @unique
+  username        String         @unique
+  displayName     String?
+  bio             String?
+  avatar          String?
+  membershipTier  String @default("STANDARD")
+  totalEarnings   Decimal        @default(0)
+  isVerified      Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  posts           Post[]
+  earnings        Earning[]
+  followers       Follow[]       @relation("UserFollowers")
+  following       Follow[]       @relation("UserFollowing")
+  likes           Like[]
+  comments        Comment[]
+
+  // NextAuth.js fields
+  accounts        Account[]
+  sessions        Session[]
+
+  @@map("users")
+}
+
+// Membership Tiers based on NFT holdings (as strings for SQLite)
+// STANDARD  - 55% revenue share - no NFTs
+// SILVER    - 60% revenue share - Silver tier NFTs
+// GOLD      - 65% revenue share - Gold tier NFTs
+// PLATINUM  - 70% revenue share - Platinum tier NFTs
+// GENESIS   - 75% revenue share - Genesis NFTs
+
+// Content Posts
+model Post {
+  id          String   @id @default(cuid())
+  title       String?
+  content     String
+  imageUrl    String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  comments    Int      @default(0)
+  shares      Int      @default(0)
+  earnings    Decimal  @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  postLikes   Like[]
+  postComments Comment[]
+
+  @@map("posts")
+}
+
+// Earnings Tracking
+model Earning {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Decimal
+  source      String
+  postId      String?
+  description String?
+  txHash      String?       // Blockchain transaction hash when paid
+  isPaid      Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+
+  @@map("earnings")
+}
+
+// Earning Sources (as strings for SQLite)
+// AD_REVENUE, TIPS, NFT_SALES, BRAND_PARTNERSHIP, CONTENT_VIEWS, ENGAGEMENT_BONUS
+
+// Social Features
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Like {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  postId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
