@@ -15,6 +15,9 @@ export default function Home() {
               <h1 className="text-2xl font-bold text-indigo-600">Contentlynk</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link href="/earnings-calculator">
+                <Button variant="ghost">📊 Earnings Calculator</Button>
+              </Link>
               <Link href="/auth/signin">
                 <Button variant="ghost">Sign In</Button>
               </Link>
@@ -43,9 +46,11 @@ export default function Home() {
                 Start Earning Today
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="px-8 py-4 text-lg">
-              Learn More
-            </Button>
+            <Link href="/earnings-calculator">
+              <Button variant="outline" size="lg" className="px-8 py-4 text-lg">
+                📊 Calculate Your Earnings
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
