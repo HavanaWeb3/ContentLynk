@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -164,4 +164,23 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+// Beta Application Model - For tracking creator beta applications
+model BetaApplication {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  platform    String   // instagram, tiktok, youtube, twitter, facebook, other
+  niche       String
+  posts       Int      // Typical monthly posts
+  engagement  String   // Average post engagement description
+  reason      String   // Why they want to join
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, WAITLIST
+  reviewedAt  DateTime?
+  reviewNotes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("beta_applications")
 }

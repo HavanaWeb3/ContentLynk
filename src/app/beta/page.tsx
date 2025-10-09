@@ -23,21 +23,32 @@ export default function BetaPage() {
     setMessage('')
 
     try {
-      // TODO: Implement actual form submission to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      setMessage('Thank you for applying! We\'ll review your application and get back to you within 48 hours.')
-      setFormData({
-        name: '',
-        email: '',
-        platform: '',
-        niche: '',
-        posts: '',
-        engagement: '',
-        reason: ''
+      const response = await fetch('/api/beta-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setMessage(result.message || 'Thank you for applying! We\'ll review your application and get back to you within 48 hours.')
+        setFormData({
+          name: '',
+          email: '',
+          platform: '',
+          niche: '',
+          posts: '',
+          engagement: '',
+          reason: ''
+        })
+      } else {
+        setMessage(result.error || 'Failed to submit application. Please try again.')
+      }
     } catch (error) {
+      console.error('Submission error:', error)
       setMessage('Oops! Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)
