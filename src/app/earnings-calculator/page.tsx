@@ -4,44 +4,46 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function EarningsCalculator() {
+  // Tier data
+  const TIERS = {
+    STANDARD: { share: 0.55, name: 'Standard', percentage: '55%' },
+    SILVER: { share: 0.60, name: 'Silver', percentage: '60%' },
+    GOLD: { share: 0.65, name: 'Gold', percentage: '65%' },
+    PLATINUM: { share: 0.70, name: 'Platinum', percentage: '70%' },
+    GENESIS: { share: 0.75, name: 'Genesis', percentage: '75%' }
+  };
+
+  // State
+  const [tier, setTier] = useState<keyof typeof TIERS>('GOLD');
   const [likes, setLikes] = useState(100);
   const [comments, setComments] = useState(25);
   const [shares, setShares] = useState(10);
   const [hasNFT, setHasNFT] = useState(false);
-  const [tokenPrice, setTokenPrice] = useState(0.75);
   const [postsPerMonth, setPostsPerMonth] = useState(20);
+  const tokenPrice = 0.75;
 
   // Calculate earnings
   const calculate = () => {
-    const likePts = likes * 1;
-    const commentPts = comments * 5;
-    const sharePts = shares * 20;
-    const baseQuality = likePts + commentPts + sharePts;
+    // Quality score
+    const qualityScore = likes * 1 + comments * 5 + shares * 20;
 
-    let finalQuality = baseQuality;
-    const bonus = hasNFT ? baseQuality * 0.5 : 0;
-    if (hasNFT) {
-      finalQuality = baseQuality * 1.5;
-    }
+    // Base earnings
+    const baseEarnings = qualityScore * 0.10;
 
-    const usdCents = finalQuality * 10; // $0.10 per point
-    const tokenPriceCents = tokenPrice * 100;
-    const tokens = usdCents / tokenPriceCents;
-    const usdValue = tokens * tokenPrice;
+    // Apply multipliers
+    const nftMultiplier = hasNFT ? 1.5 : 1;
+    const tierMultiplier = TIERS[tier].share / TIERS.STANDARD.share;
 
-    const monthlyTokenTotal = tokens * postsPerMonth;
-    const monthlyUsdTotal = usdValue * postsPerMonth;
+    // Calculate totals
+    const totalUSD = baseEarnings * nftMultiplier * tierMultiplier;
+    const tokens = totalUSD / tokenPrice;
+    const monthly = totalUSD * postsPerMonth;
 
     return {
-      likePts,
-      commentPts,
-      sharePts,
-      baseQuality,
-      bonus,
+      qualityScore,
+      totalUSD,
       tokens: Math.round(tokens),
-      usdValue,
-      monthlyTokenTotal: Math.round(monthlyTokenTotal),
-      monthlyUsdTotal,
+      monthly
     };
   };
 
@@ -54,9 +56,23 @@ export default function EarningsCalculator() {
           min-height: 100vh;
           background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FBB03B 100%);
           padding: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        }
+
+        .header {
+          max-width: 800px;
+          margin: 0 auto 30px;
+          text-align: center;
+          color: white;
+        }
+
+        .header h1 {
+          font-size: 2.5em;
+          margin-bottom: 10px;
+        }
+
+        .header p {
+          font-size: 1.2em;
+          opacity: 0.95;
         }
 
         .calculator-container {
@@ -65,24 +81,8 @@ export default function EarningsCalculator() {
           box-shadow: 0 20px 60px rgba(0,0,0,0.3);
           max-width: 800px;
           width: 100%;
+          margin: 0 auto;
           overflow: hidden;
-        }
-
-        .header {
-          background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-          color: white;
-          padding: 40px 30px;
-          text-align: center;
-        }
-
-        .header h1 {
-          font-size: 2.5em;
-          margin-bottom: 10px;
-        }
-
-        .header .subtitle {
-          font-size: 1.2em;
-          opacity: 0.95;
         }
 
         .calculator-body {
@@ -98,31 +98,42 @@ export default function EarningsCalculator() {
           color: #FF6B35;
           margin-bottom: 20px;
           font-weight: 600;
-          display: flex;
-          align-items: center;
+        }
+
+        .tier-selector {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
           gap: 10px;
+          margin-bottom: 20px;
         }
 
-        .formula-explanation {
-          background: #fff5e6;
-          padding: 20px;
+        .tier-option {
+          padding: 15px 10px;
+          border: 2px solid #e0e0e0;
           border-radius: 10px;
-          margin-bottom: 30px;
-          border-left: 4px solid #FF6B35;
-        }
-
-        .formula-explanation h3 {
-          color: #FF6B35;
-          margin-bottom: 10px;
-        }
-
-        .formula {
-          font-family: 'Courier New', monospace;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.3s;
           background: white;
-          padding: 15px;
-          border-radius: 8px;
-          margin: 10px 0;
+        }
+
+        .tier-option:hover {
+          border-color: #FF6B35;
+        }
+
+        .tier-option.active {
+          border-color: #FF6B35;
+          background: #FFF5F0;
+        }
+
+        .tier-option .tier-name {
           font-weight: bold;
+          margin-bottom: 5px;
+        }
+
+        .tier-option .tier-share {
+          font-size: 0.9em;
+          color: #666;
         }
 
         .slider-group {
@@ -135,10 +146,6 @@ export default function EarningsCalculator() {
           align-items: center;
           margin-bottom: 10px;
           font-size: 1.1em;
-        }
-
-        .slider-label .icon {
-          font-size: 1.5em;
         }
 
         .slider-label .value {
@@ -184,7 +191,6 @@ export default function EarningsCalculator() {
           padding: 20px;
           background: #f9f9f9;
           border-radius: 10px;
-          margin-bottom: 20px;
         }
 
         .toggle-switch {
@@ -231,67 +237,12 @@ export default function EarningsCalculator() {
           transform: translateX(30px);
         }
 
-        .toggle-label {
-          font-size: 1.1em;
-          font-weight: 600;
-        }
-
-        .price-input {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 15px;
-          background: #f9f9f9;
-          border-radius: 10px;
-        }
-
-        .price-input input {
-          flex: 1;
-          padding: 10px 15px;
-          border: 2px solid #e0e0e0;
-          border-radius: 8px;
-          font-size: 1.1em;
-          font-weight: 600;
-        }
-
-        .price-input input:focus {
-          outline: none;
-          border-color: #FF6B35;
-        }
-
         .results {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
           padding: 30px;
           border-radius: 15px;
           margin-top: 30px;
-        }
-
-        .results-title {
-          font-size: 1.5em;
-          margin-bottom: 20px;
-          text-align: center;
-        }
-
-        .calculation-breakdown {
-          background: rgba(255,255,255,0.1);
-          padding: 20px;
-          border-radius: 10px;
-          margin-bottom: 20px;
-        }
-
-        .calc-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px 0;
-          border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .calc-row:last-child {
-          border-bottom: none;
-          font-weight: bold;
-          font-size: 1.2em;
-          padding-top: 15px;
         }
 
         .earnings-display {
@@ -313,23 +264,12 @@ export default function EarningsCalculator() {
           margin-bottom: 10px;
         }
 
-        .earnings-display .usd-equivalent {
-          font-size: 1.5em;
-          opacity: 0.9;
-        }
-
         .monthly-projection {
           margin-top: 20px;
           padding: 20px;
           background: rgba(255,255,255,0.1);
           border-radius: 10px;
           text-align: center;
-        }
-
-        .monthly-projection .title {
-          font-size: 1.1em;
-          margin-bottom: 10px;
-          opacity: 0.9;
         }
 
         .monthly-posts {
@@ -356,12 +296,6 @@ export default function EarningsCalculator() {
         .post-option.active {
           background: rgba(255,255,255,0.3);
           border-color: white;
-        }
-
-        .monthly-earnings {
-          font-size: 2em;
-          font-weight: bold;
-          margin-top: 15px;
         }
 
         .cta-section {
@@ -392,45 +326,43 @@ export default function EarningsCalculator() {
           .header h1 {
             font-size: 2em;
           }
-
           .earnings-display .amount {
             font-size: 2.5em;
-          }
-
-          .calculator-body {
-            padding: 30px 20px;
           }
         }
       `}</style>
 
-      <div className="calculator-container">
-        <div className="header">
-          <h1>🐘 Contentlynk Earnings Calculator</h1>
-          <p className="subtitle">See what you could earn for your content</p>
-        </div>
+      <div className="header">
+        <h1>🐘 Contentlynk Earnings Calculator</h1>
+        <p>See what you could earn with fair creator compensation</p>
+      </div>
 
+      <div className="calculator-container">
         <div className="calculator-body">
-          {/* Formula Explanation */}
-          <div className="formula-explanation">
-            <h3>How Earnings Work:</h3>
-            <div className="formula">
-              Quality Score = Likes + (Comments × 5) + (Shares × 20)
+          {/* Tier Selection */}
+          <div className="section">
+            <h2 className="section-title">🎯 Select Your Tier</h2>
+            <div className="tier-selector">
+              {(Object.keys(TIERS) as Array<keyof typeof TIERS>).map((tierKey) => (
+                <div
+                  key={tierKey}
+                  className={`tier-option ${tier === tierKey ? 'active' : ''}`}
+                  onClick={() => setTier(tierKey)}
+                >
+                  <div className="tier-name">{TIERS[tierKey].name}</div>
+                  <div className="tier-share">{TIERS[tierKey].percentage}</div>
+                </div>
+              ))}
             </div>
-            <div className="formula">
-              Your Earnings = Quality Score × $0.10 (paid in $HVNA tokens)
-            </div>
-            <p style={{ marginTop: '10px', color: '#666' }}>
-              💡 Move the sliders below to estimate your earnings based on typical engagement
-            </p>
           </div>
 
           {/* Engagement Inputs */}
           <div className="section">
-            <h2 className="section-title">📊 Your Post Engagement</h2>
+            <h2 className="section-title">📊 Your Typical Post Engagement</h2>
 
             <div className="slider-group">
               <div className="slider-label">
-                <span><span className="icon">👍</span> Likes</span>
+                <span>👍 Likes</span>
                 <span className="value">{likes}</span>
               </div>
               <input
@@ -445,7 +377,7 @@ export default function EarningsCalculator() {
 
             <div className="slider-group">
               <div className="slider-label">
-                <span><span className="icon">💬</span> Comments</span>
+                <span>💬 Comments</span>
                 <span className="value">{comments}</span>
               </div>
               <input
@@ -460,7 +392,7 @@ export default function EarningsCalculator() {
 
             <div className="slider-group">
               <div className="slider-label">
-                <span><span className="icon">🔄</span> Shares</span>
+                <span>🔄 Shares</span>
                 <span className="value">{shares}</span>
               </div>
               <input
@@ -476,7 +408,7 @@ export default function EarningsCalculator() {
 
           {/* NFT Bonus Toggle */}
           <div className="section">
-            <h2 className="section-title">🎯 Creator Pass NFT Bonus</h2>
+            <h2 className="section-title">🎨 Creator Pass NFT</h2>
             <div className="toggle-group">
               <label className="toggle-switch">
                 <input
@@ -486,67 +418,27 @@ export default function EarningsCalculator() {
                 />
                 <span className="toggle-slider"></span>
               </label>
-              <span className="toggle-label">I have Creator Pass NFT (+50% bonus)</span>
-            </div>
-          </div>
-
-          {/* Token Price */}
-          <div className="section">
-            <h2 className="section-title">💎 $HVNA Token Price</h2>
-            <div className="price-input">
-              <span style={{ fontSize: '1.2em' }}>$</span>
-              <input
-                type="number"
-                value={tokenPrice}
-                step="0.01"
-                min="0.01"
-                max="10"
-                onChange={(e) => setTokenPrice(parseFloat(e.target.value) || 0.75)}
-              />
-              <span style={{ color: '#999' }}>per token</span>
+              <span style={{ fontWeight: 600 }}>I have Creator Pass NFT (+50% bonus)</span>
             </div>
           </div>
 
           {/* Results */}
           <div className="results">
-            <h2 className="results-title">💰 Your Earnings Per Post</h2>
-
-            <div className="calculation-breakdown">
-              <div className="calc-row">
-                <span>Likes (×1)</span>
-                <span>{results.likePts} points</span>
-              </div>
-              <div className="calc-row">
-                <span>Comments (×5)</span>
-                <span>{results.commentPts} points</span>
-              </div>
-              <div className="calc-row">
-                <span>Shares (×20)</span>
-                <span>{results.sharePts} points</span>
-              </div>
-              <div className="calc-row">
-                <span>Quality Score</span>
-                <span>{results.baseQuality} points</span>
-              </div>
-              {hasNFT && (
-                <div className="calc-row">
-                  <span>NFT Bonus (+50%)</span>
-                  <span>+{results.bonus.toFixed(1)} points</span>
-                </div>
-              )}
-            </div>
-
             <div className="earnings-display">
-              <div className="label">You Earn:</div>
-              <div className="amount">{results.tokens} $HVNA</div>
-              <div className="usd-equivalent">(~${results.usdValue.toFixed(2)})</div>
+              <div className="label">You Earn Per Post:</div>
+              <div className="amount">${results.totalUSD.toFixed(2)}</div>
+              <div style={{ fontSize: '1.2em', opacity: 0.9 }}>
+                ({results.tokens} $HVNA tokens)
+              </div>
             </div>
 
             {/* Monthly Projection */}
             <div className="monthly-projection">
-              <div className="title">📅 Monthly Earnings Projection</div>
+              <div style={{ fontSize: '1.2em', marginBottom: '10px', opacity: 0.9 }}>
+                📅 Monthly Earnings Projection
+              </div>
               <p style={{ marginBottom: '10px', opacity: 0.9 }}>
-                If you post consistently with similar engagement:
+                If you post consistently:
               </p>
               <div className="monthly-posts">
                 {[10, 20, 30, 50].map((posts) => (
@@ -559,11 +451,8 @@ export default function EarningsCalculator() {
                   </div>
                 ))}
               </div>
-              <div className="monthly-earnings">
-                <span>{results.monthlyTokenTotal.toLocaleString()} $HVNA</span>
-                <div style={{ fontSize: '0.6em', opacity: 0.9 }}>
-                  <span>(~${results.monthlyUsdTotal.toFixed(2)}/month)</span>
-                </div>
+              <div style={{ fontSize: '2em', fontWeight: 'bold', marginTop: '15px' }}>
+                ${results.monthly.toFixed(2)}/month
               </div>
             </div>
           </div>
@@ -571,13 +460,13 @@ export default function EarningsCalculator() {
           {/* CTA */}
           <div className="cta-section">
             <p style={{ fontSize: '1.2em', marginBottom: '20px', color: '#666' }}>
-              Ready to start earning from your content?
+              Ready to start earning fairly?
             </p>
-            <Link href="/" className="cta-button">
-              Join Contentlynk Now →
+            <Link href="/beta#apply" className="cta-button">
+              Apply for Beta Access →
             </Link>
             <p style={{ marginTop: '15px', color: '#999' }}>
-              ✓ Zero follower requirements &nbsp; ✓ Instant payments &nbsp; ✓ 100% transparent
+              ✓ Zero follower requirements &nbsp; ✓ Start earning day one &nbsp; ✓ 100% transparent
             </p>
           </div>
         </div>
