@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
@@ -19,14 +21,33 @@ interface BetaApplication {
 }
 
 export default function BetaApplicationsAdmin() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [applications, setApplications] = useState<BetaApplication[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('ALL')
   const [error, setError] = useState('')
 
+  // Check authentication and admin status
   useEffect(() => {
-    fetchApplications()
-  }, [filter])
+    if (status === 'loading') return
+
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin?callbackUrl=/admin/beta-applications')
+      return
+    }
+
+    if (session && !session.user.isAdmin) {
+      router.push('/?error=unauthorized')
+      return
+    }
+  }, [session, status, router])
+
+  useEffect(() => {
+    if (session?.user.isAdmin) {
+      fetchApplications()
+    }
+  }, [filter, session])
 
   const fetchApplications = async () => {
     setLoading(true)
@@ -62,6 +83,23 @@ export default function BetaApplicationsAdmin() {
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'
   }
 
+  // Show loading state while checking auth
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Only render if user is authenticated and admin
+  if (!session?.user.isAdmin) {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -71,6 +109,7 @@ export default function BetaApplicationsAdmin() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Beta Applications</h1>
               <p className="text-gray-600 mt-1">Review and manage creator applications</p>
+              <p className="text-sm text-green-600 mt-1">✓ Logged in as admin: {session.user.email}</p>
             </div>
             <Link href="/">
               <Button variant="outline">← Back to Home</Button>
@@ -229,10 +268,10 @@ export default function BetaApplicationsAdmin() {
         </div>
 
         {/* Note */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>⚠️ Note:</strong> This admin page is currently unprotected. Add authentication before going live.
-            To update application status, you'll need to add status update functionality or use Prisma Studio.
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-sm text-green-800">
+            <strong>✅ Secure:</strong> This admin page is now protected with authentication. Only users with admin privileges can access this page.
+            To update application status, you can add status update functionality or use Prisma Studio.
           </p>
         </div>
       </div>

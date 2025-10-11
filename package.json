@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "make-admin": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/make-admin.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

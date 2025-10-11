@@ -90,6 +90,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email!,
               username: user.username,
               displayName: user.displayName || undefined,
+              isAdmin: user.isAdmin,
             }
           } else {
             // Login attempt
@@ -113,6 +114,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email!,
               username: user.username,
               displayName: user.displayName || undefined,
+              isAdmin: user.isAdmin,
             }
           }
         } catch (error) {
@@ -130,6 +132,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.username = user.username
         token.displayName = user.displayName
+        token.isAdmin = user.isAdmin
       }
       return token
     },
@@ -138,6 +141,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub!
         session.user.username = token.username
         session.user.displayName = token.displayName
+        session.user.isAdmin = token.isAdmin
       }
       return session
     },
@@ -152,6 +156,7 @@ declare module 'next-auth' {
   interface User {
     username?: string
     displayName?: string
+    isAdmin?: boolean
   }
 
   interface Session {
@@ -160,6 +165,7 @@ declare module 'next-auth' {
       email: string
       username?: string
       displayName?: string
+      isAdmin?: boolean
     }
   }
 }
@@ -168,5 +174,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     username?: string
     displayName?: string
+    isAdmin?: boolean
   }
 }
