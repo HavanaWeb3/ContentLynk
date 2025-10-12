@@ -3,12 +3,12 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function BetaApplicationsAdmin() {
+export default function FlaggedPostsAdmin() {
   const router = useRouter()
 
   // Redirect to unified admin dashboard
   useEffect(() => {
-    router.push('/admin?tab=beta')
+    router.push('/admin?tab=flagged')
   }, [router])
 
   return (
