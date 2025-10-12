@@ -17,12 +17,18 @@ model User {
   displayName     String?
   bio             String?
   avatar          String?
-  membershipTier  String @default("STANDARD")
+  membershipTier  String         @default("STANDARD")
   totalEarnings   Decimal        @default(0)
   isVerified      Boolean        @default(false)
   isAdmin         Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+
+  // Mode system fields
+  trustScore      Int?           @default(100) @map("trust_score")
+  status          String?        @default("ACTIVE")
+  probationUntil  DateTime?      @map("probation_until")
+  suspendedAt     DateTime?      @map("suspended_at")
 
   // Relations
   posts           Post[]
@@ -82,6 +88,10 @@ model Earning {
   txHash      String?       // Blockchain transaction hash when paid
   isPaid      Boolean       @default(false)
   createdAt   DateTime      @default(now())
+
+  // Mode system fields
+  heldUntil   DateTime?     @map("held_until")
+  holdReason  String?       @map("hold_reason")
 
   @@map("earnings")
 }
