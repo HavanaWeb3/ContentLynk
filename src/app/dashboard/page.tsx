@@ -184,6 +184,14 @@ export default function Dashboard() {
                 onMembershipUpdate={handleMembershipUpdate}
                 showFullCard={false}
               /> */}
+              {session.user?.isAdmin && (
+                <Button
+                  onClick={() => router.push('/admin/beta-applications')}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  🔧 Admin
+                </Button>
+              )}
               <Button
                 onClick={() => router.push('/create')}
                 className="bg-indigo-600 hover:bg-indigo-700"
