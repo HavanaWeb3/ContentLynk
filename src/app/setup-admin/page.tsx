@@ -77,16 +77,16 @@ export default function SetupAdminPage() {
           Logged in as: <span className="font-semibold">{session?.user?.email}</span>
         </p>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-          <p className="text-sm text-yellow-800">
-            <strong>⚠️ One-time setup:</strong> Enter the admin setup secret to grant admin privileges to your account.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p className="text-sm text-blue-800">
+            <strong>✨ First-time setup:</strong> Make yourself the first admin! No secret required for the initial admin user.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="secret" className="block text-sm font-medium text-gray-700 mb-2">
-              Admin Setup Secret
+              Admin Setup Secret (optional for first admin)
             </label>
             <input
               type="password"
@@ -94,11 +94,10 @@ export default function SetupAdminPage() {
               value={secret}
               onChange={(e) => setSecret(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="Enter secret"
-              required
+              placeholder="Leave empty for first admin"
             />
             <p className="mt-1 text-xs text-gray-500">
-              Secret: IA8BkNILioO8DaMGU6kbSKfMApTbLEEZCpGgpaj2hoE=
+              If an admin already exists, you'll need the secret: IA8BkNILioO8DaMGU6kbSKfMApTbLEEZCpGgpaj2hoE=
             </p>
           </div>
 
@@ -116,7 +115,7 @@ export default function SetupAdminPage() {
 
           <Button
             type="submit"
-            disabled={loading || !secret}
+            disabled={loading}
             className="w-full"
           >
             {loading ? 'Setting up...' : 'Make Me Admin'}

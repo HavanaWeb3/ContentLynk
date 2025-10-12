@@ -7,13 +7,21 @@ export async function POST(request: NextRequest) {
   try {
     const { email, secret } = await request.json()
 
-    // Simple secret check (replace with your own secret)
-    if (secret !== process.env.ADMIN_SETUP_SECRET) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    // Check if any admin exists
+    const existingAdmin = await prisma.user.findFirst({
+      where: { isAdmin: true }
+    })
+
+    // If an admin already exists, require the secret
+    if (existingAdmin) {
+      if (secret !== process.env.ADMIN_SETUP_SECRET) {
+        return NextResponse.json(
+          { error: 'Unauthorized - Admin already exists, secret required' },
+          { status: 401 }
+        )
+      }
     }
+    // For first admin, no secret needed!
 
     const user = await prisma.user.update({
       where: { email },
