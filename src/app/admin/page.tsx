@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import OverviewTab from '@/components/admin/OverviewTab';
 
 type TabType = 'overview' | 'flagged' | 'beta' | 'users' | 'analytics';
 
-export default function AdminDashboard() {
+function AdminDashboardContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -156,5 +156,20 @@ export default function AdminDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    }>
+      <AdminDashboardContent />
+    </Suspense>
   );
 }
