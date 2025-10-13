@@ -21,7 +21,7 @@ export async function POST(
     // Check if post exists and get creator
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { id: true, userId: true }
+      select: { id: true, authorId: true }
     });
 
     if (!post) {
@@ -46,7 +46,7 @@ export async function POST(
 
     // Process earnings for post creator
     try {
-      const earningsResult = await processEarnings(postId, post.userId);
+      const earningsResult = await processEarnings(postId, post.authorId);
 
       if (!earningsResult.success) {
         console.log(`[Earnings] Share blocked: ${earningsResult.message}`);
@@ -57,7 +57,7 @@ export async function POST(
         });
       }
 
-      console.log(`[Earnings] Share earned $${earningsResult.finalEarnings} for creator ${post.userId}`);
+      console.log(`[Earnings] Share earned $${earningsResult.finalEarnings} for creator ${post.authorId}`);
       return NextResponse.json({
         success: true,
         earnings: earningsResult.finalEarnings,
