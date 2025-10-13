@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 
@@ -65,8 +66,17 @@ export default function BetaPage() {
       <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-indigo-600">
-              🐘 Contentlynk
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-12 h-12 transition-transform group-hover:rotate-6">
+                <Image
+                  src="/images/contentlynk-logo.png"
+                  alt="Contentlynk"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <span className="text-2xl font-bold text-indigo-600">Contentlynk</span>
             </Link>
             <div className="flex items-center space-x-4">
               <Link href="/">
@@ -83,11 +93,24 @@ export default function BetaPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
+          {/* Hero Logo */}
+          <div className="flex justify-center mb-8 animate-fadeInDown">
+            <div className="relative w-32 h-32 md:w-48 md:h-48 transition-transform hover:scale-105 filter drop-shadow-2xl">
+              <Image
+                src="/images/contentlynk-logo.png"
+                alt="Contentlynk - Fair Creator Compensation Platform"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
           <div className="inline-block bg-white/20 backdrop-blur-md px-6 py-2 rounded-full text-sm font-semibold mb-6">
             🎯 LIMITED: 1,000 Beta Creator Spots
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            🐘 Get Paid For Your Content<br />From Day One
+            Get Paid For Your Content<br />From Day One
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-95">
             55-75% revenue share • Zero follower minimums • Instant earnings

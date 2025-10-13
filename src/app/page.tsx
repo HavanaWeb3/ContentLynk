@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 
@@ -11,9 +12,18 @@ export default function Home() {
       <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-12 h-12 transition-transform group-hover:rotate-6">
+                <Image
+                  src="/images/contentlynk-logo.png"
+                  alt="Contentlynk"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
               <h1 className="text-2xl font-bold text-indigo-600">Contentlynk</h1>
-            </div>
+            </Link>
             <div className="flex items-center space-x-4">
               <Link href="/earnings-calculator">
                 <Button variant="ghost">📊 Earnings Calculator</Button>
@@ -32,6 +42,19 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
+          {/* Hero Logo */}
+          <div className="flex justify-center mb-8 animate-fadeInDown">
+            <div className="relative w-40 h-40 md:w-52 md:h-52 transition-transform hover:scale-105 filter drop-shadow-2xl">
+              <Image
+                src="/images/contentlynk-logo.png"
+                alt="Contentlynk - Creator Economy Reimagined"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
             Creator Economy
             <span className="block text-indigo-600">Reimagined</span>
