@@ -301,6 +301,35 @@ export async function processEarnings(
   const mode = isBetaMode() ? 'BETA' : 'NATURAL';
 
   try {
+    // Step 0: Check verification status
+    const user = await prisma.user.findUnique({
+      where: { id: creatorId },
+      select: { emailVerified: true, phoneVerified: true }
+    });
+
+    if (!user?.emailVerified || !user?.phoneVerified) {
+      const missing = [];
+      if (!user?.emailVerified) missing.push('email');
+      if (!user?.phoneVerified) missing.push('phone');
+
+      return {
+        success: false,
+        rawEarnings: 0,
+        finalEarnings: 0,
+        cappedAmount: null,
+        mode,
+        blocked: true,
+        warned: false,
+        message: `Verification required: Please verify your ${missing.join(' and ')} to start earning`,
+        details: {
+          perPostCapExceeded: false,
+          dailyCapExceeded: false,
+          accountAge: 0,
+          gracePeriodActive: false,
+        },
+      };
+    }
+
     // Step 1: Calculate raw earnings
     const rawCalc = await calculateRawEarnings(postId, creatorId);
     let finalEarnings = rawCalc.rawEarnings;

@@ -19,10 +19,16 @@ model User {
   avatar          String?
   membershipTier  String         @default("STANDARD")
   totalEarnings   Decimal        @default(0)
-  isVerified      Boolean        @default(false)
+  isVerified      Boolean        @default(false)  // NFT verification
   isAdmin         Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+
+  // Verification fields
+  emailVerified   Boolean        @default(false) @map("email_verified")
+  phoneNumber     String?        @unique @map("phone_number")
+  phoneVerified   Boolean        @default(false) @map("phone_verified")
+  signupIp        String?        @map("signup_ip")
 
   // Mode system fields
   trustScore      Int?           @default(100) @map("trust_score")
@@ -194,4 +200,68 @@ model BetaApplication {
   updatedAt   DateTime @updatedAt
 
   @@map("beta_applications")
+}
+
+// Email Verification Tokens
+model EmailVerificationToken {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@map("email_verification_tokens")
+}
+
+// Phone Verification Codes
+model PhoneVerificationCode {
+  id          String    @id @default(cuid())
+  userId      String
+  phoneNumber String    @map("phone_number")
+  code        String
+  expires     DateTime
+  used        Boolean   @default(false)
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([phoneNumber])
+  @@index([code])
+  @@map("phone_verification_codes")
+}
+
+// IP Tracking for Signup Rate Limiting
+model SignupIpTracking {
+  id        String   @id @default(cuid())
+  ipAddress String   @map("ip_address")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now())
+
+  @@index([ipAddress])
+  @@index([createdAt])
+  @@map("signup_ip_tracking")
+}
+
+// Phone Number Usage Tracking (max 3 accounts per phone)
+model PhoneUsageTracking {
+  id          String   @id @default(cuid())
+  phoneNumber String   @map("phone_number")
+  userId      String   @map("user_id")
+  createdAt   DateTime @default(now())
+
+  @@index([phoneNumber])
+  @@map("phone_usage_tracking")
+}
+
+// SMS Rate Limiting (max 3 SMS per phone per hour)
+model SmsRateLimit {
+  id          String   @id @default(cuid())
+  phoneNumber String   @map("phone_number")
+  sentAt      DateTime @default(now()) @map("sent_at")
+
+  @@index([phoneNumber])
+  @@index([sentAt])
+  @@map("sms_rate_limit")
 }
