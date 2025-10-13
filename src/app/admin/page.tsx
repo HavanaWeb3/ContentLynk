@@ -9,8 +9,9 @@ import Link from 'next/link';
 import BetaApplicationsTab from '@/components/admin/BetaApplicationsTab';
 import FlaggedPostsTab from '@/components/admin/FlaggedPostsTab';
 import OverviewTab from '@/components/admin/OverviewTab';
+import ModeSystemTab from '@/components/admin/ModeSystemTab';
 
-type TabType = 'overview' | 'flagged' | 'beta' | 'users' | 'analytics';
+type TabType = 'overview' | 'flagged' | 'beta' | 'mode' | 'users' | 'analytics';
 
 function AdminDashboardContent() {
   const { data: session, status } = useSession();
@@ -36,7 +37,7 @@ function AdminDashboardContent() {
   // Set active tab from URL
   useEffect(() => {
     const tab = searchParams.get('tab') as TabType;
-    if (tab && ['overview', 'flagged', 'beta', 'users', 'analytics'].includes(tab)) {
+    if (tab && ['overview', 'flagged', 'beta', 'mode', 'users', 'analytics'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -68,6 +69,7 @@ function AdminDashboardContent() {
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'flagged', label: 'Flagged Posts', icon: '🚨', badge: true },
     { id: 'beta', label: 'Beta Applications', icon: '📝', badge: true },
+    { id: 'mode', label: 'Mode System', icon: '🔧' },
     { id: 'users', label: 'Users', icon: '👥', disabled: true },
     { id: 'analytics', label: 'Analytics', icon: '📈', disabled: true }
   ];
@@ -134,6 +136,7 @@ function AdminDashboardContent() {
         {activeTab === 'overview' && <OverviewTab />}
         {activeTab === 'flagged' && <FlaggedPostsTab />}
         {activeTab === 'beta' && <BetaApplicationsTab />}
+        {activeTab === 'mode' && <ModeSystemTab />}
         {activeTab === 'users' && (
           <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center">
             <p className="text-xl text-gray-600 dark:text-gray-400">
