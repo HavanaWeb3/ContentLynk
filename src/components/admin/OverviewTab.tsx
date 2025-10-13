@@ -7,7 +7,13 @@ export default function OverviewTab() {
     flaggedPosts: 0,
     betaApplications: 0,
     totalUsers: 0,
-    recentActivity: []
+    recentActivity: [],
+    earnings: {
+      total: 0,
+      today: 0,
+      pending: 0,
+      mode: 'BETA' as 'BETA' | 'NATURAL'
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -18,19 +24,27 @@ export default function OverviewTab() {
   const fetchOverviewStats = async () => {
     try {
       // Fetch stats from multiple endpoints
-      const [flaggedRes, betaRes] = await Promise.all([
+      const [flaggedRes, betaRes, earningsRes] = await Promise.all([
         fetch('/api/admin/flagged'),
-        fetch('/api/beta-applications')
+        fetch('/api/beta-applications'),
+        fetch('/api/admin/earnings-stats')
       ]);
 
       const flaggedData = await flaggedRes.json();
       const betaData = await betaRes.json();
+      const earningsData = await earningsRes.json();
 
       setStats({
         flaggedPosts: flaggedData.flaggedPosts?.length || 0,
         betaApplications: betaData.applications?.filter((a: any) => a.status === 'PENDING').length || 0,
         totalUsers: 0, // TODO: Add users endpoint
-        recentActivity: []
+        recentActivity: [],
+        earnings: {
+          total: earningsData.total || 0,
+          today: earningsData.today || 0,
+          pending: earningsData.pending || 0,
+          mode: earningsData.mode || 'BETA'
+        }
       });
     } catch (error) {
       console.error('Error fetching overview stats:', error);
@@ -59,7 +73,7 @@ export default function OverviewTab() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -91,6 +105,23 @@ export default function OverviewTab() {
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
             Pending approval
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                Total Earnings
+              </p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
+                ${stats.earnings.total.toFixed(2)}
+              </p>
+            </div>
+            <div className="text-4xl">💰</div>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
+            Platform-wide
           </p>
         </div>
 
@@ -171,7 +202,7 @@ export default function OverviewTab() {
       </div>
 
       {/* System Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
             Anti-Gaming Protection
@@ -217,6 +248,44 @@ export default function OverviewTab() {
               <span className="text-gray-700 dark:text-gray-300">Diversity Threshold</span>
               <span className="font-semibold text-gray-900 dark:text-white">&lt; 0.3 flags</span>
             </div>
+          </div>
+        </div>
+
+        <div className={`rounded-lg shadow p-6 ${
+          stats.earnings.mode === 'BETA'
+            ? 'bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-200 dark:border-orange-800'
+            : 'bg-white dark:bg-gray-800'
+        }`}>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            Earnings Mode
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700 dark:text-gray-300">Current Mode</span>
+              <span className={`font-bold ${
+                stats.earnings.mode === 'BETA' ? 'text-orange-600' : 'text-green-600'
+              }`}>
+                {stats.earnings.mode}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700 dark:text-gray-300">Today's Earnings</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
+                ${stats.earnings.today.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700 dark:text-gray-300">Pending Payout</span>
+              <span className="font-semibold text-orange-600">
+                ${stats.earnings.pending.toFixed(2)}
+              </span>
+            </div>
+            <button
+              onClick={() => window.location.href = '/admin?tab=mode'}
+              className="w-full mt-2 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 border border-indigo-600 dark:border-indigo-400 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition"
+            >
+              View Mode Details →
+            </button>
           </div>
         </div>
       </div>

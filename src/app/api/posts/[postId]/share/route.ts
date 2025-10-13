@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createEngagement } from '@/lib/anti-gaming';
+import { processEarnings } from '@/lib/earnings-processor';
 import { prisma } from '@/lib/db';
 
 export async function POST(
@@ -17,9 +18,10 @@ export async function POST(
 
     const { postId } = params;
 
-    // Check if post exists
+    // Check if post exists and get creator
     const post = await prisma.post.findUnique({
-      where: { id: postId }
+      where: { id: postId },
+      select: { id: true, userId: true }
     });
 
     if (!post) {
@@ -42,7 +44,30 @@ export async function POST(
       data: { shares: { increment: 1 } }
     });
 
-    return NextResponse.json({ success: true });
+    // Process earnings for post creator
+    try {
+      const earningsResult = await processEarnings(postId, post.userId);
+
+      if (!earningsResult.success) {
+        console.log(`[Earnings] Share blocked: ${earningsResult.message}`);
+        return NextResponse.json({
+          success: true,
+          earningsBlocked: true,
+          earningsMessage: earningsResult.message
+        });
+      }
+
+      console.log(`[Earnings] Share earned $${earningsResult.finalEarnings} for creator ${post.userId}`);
+      return NextResponse.json({
+        success: true,
+        earnings: earningsResult.finalEarnings,
+        earningsMode: earningsResult.mode
+      });
+    } catch (error) {
+      // Don't fail the share if earnings processing fails
+      console.error('[Earnings] Error processing earnings:', error);
+      return NextResponse.json({ success: true });
+    }
   } catch (error) {
     console.error('Error sharing post:', error);
     return NextResponse.json({ error: 'Failed to share post' }, { status: 500 });

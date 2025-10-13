@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createEngagement } from '@/lib/anti-gaming';
+import { processEarnings } from '@/lib/earnings-processor';
 import { prisma } from '@/lib/db';
 
 export async function POST(
@@ -22,9 +23,10 @@ export async function POST(
       return NextResponse.json({ error: 'Comment content is required' }, { status: 400 });
     }
 
-    // Check if post exists
+    // Check if post exists and get creator
     const post = await prisma.post.findUnique({
-      where: { id: postId }
+      where: { id: postId },
+      select: { id: true, userId: true }
     });
 
     if (!post) {
@@ -65,7 +67,30 @@ export async function POST(
       data: { comments: { increment: 1 } }
     });
 
-    return NextResponse.json({ comment }, { status: 201 });
+    // Process earnings for post creator
+    try {
+      const earningsResult = await processEarnings(postId, post.userId);
+
+      if (!earningsResult.success) {
+        console.log(`[Earnings] Comment blocked: ${earningsResult.message}`);
+        return NextResponse.json({
+          comment,
+          earningsBlocked: true,
+          earningsMessage: earningsResult.message
+        }, { status: 201 });
+      }
+
+      console.log(`[Earnings] Comment earned $${earningsResult.finalEarnings} for creator ${post.userId}`);
+      return NextResponse.json({
+        comment,
+        earnings: earningsResult.finalEarnings,
+        earningsMode: earningsResult.mode
+      }, { status: 201 });
+    } catch (error) {
+      // Don't fail the comment if earnings processing fails
+      console.error('[Earnings] Error processing earnings:', error);
+      return NextResponse.json({ comment }, { status: 201 });
+    }
   } catch (error) {
     console.error('Error creating comment:', error);
     return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
