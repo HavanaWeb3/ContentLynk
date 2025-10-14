@@ -21,6 +21,7 @@ const registerSchema = z.object({
 export const authOptions: NextAuthOptions = {
   // Note: Cannot use adapter with CredentialsProvider
   // adapter: PrismaAdapter(prisma),
+  debug: true, // Enable debug mode
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -165,6 +166,17 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
+  },
+  logger: {
+    error(code, metadata) {
+      console.error('NextAuth Error:', code, metadata)
+    },
+    warn(code) {
+      console.warn('NextAuth Warning:', code)
+    },
+    debug(code, metadata) {
+      console.log('NextAuth Debug:', code, metadata)
+    }
   },
 }
 
