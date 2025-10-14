@@ -10,7 +10,7 @@
  */
 
 import { prisma } from '@/lib/db';
-import { getCurrentModeConfig, isBetaMode, getModeMessage } from '@/config/platform-mode';
+import { getCurrentModeConfig, isBetaModeSync, getModeMessage } from '@/config/platform-mode';
 
 // Revenue share by tier (from schema)
 const TIER_REVENUE_SHARE = {
@@ -224,10 +224,10 @@ export async function checkDailyLimit(
   const projectedTotal = currentDailyTotal + newEarnings;
 
   // Check if in grace period
-  const gracePeriodActive = isBetaMode() && accountAge < config.gracePeriodDays;
+  const gracePeriodActive = isBetaModeSync() && accountAge < config.gracePeriodDays;
 
   // BETA Mode logic
-  if (isBetaMode()) {
+  if (isBetaModeSync()) {
     const dailyCap = config.caps.daily || 500;
 
     // Grace period: No cap enforcement
@@ -298,7 +298,7 @@ export async function processEarnings(
 ): Promise<ProcessedEarningsResult> {
   // Get current mode config
   const config = getCurrentModeConfig();
-  const mode = isBetaMode() ? 'BETA' : 'NATURAL';
+  const mode = isBetaModeSync() ? 'BETA' : 'NATURAL';
 
   try {
     // Step 0: Check verification status
@@ -340,7 +340,7 @@ export async function processEarnings(
     let warned = false;
 
     // Step 2: Check per-post cap (BETA only)
-    if (isBetaMode() && config.caps.perPost) {
+    if (isBetaModeSync() && config.caps.perPost) {
       if (rawCalc.rawEarnings > config.caps.perPost) {
         perPostCapExceeded = true;
         cappedAmount = rawCalc.rawEarnings - config.caps.perPost;
@@ -489,6 +489,6 @@ export async function getCreatorEarningsSummary(creatorId: string) {
       ? Math.max(0, config.caps.daily - dailyCheck.currentDailyTotal)
       : null,
     gracePeriodActive: dailyCheck.gracePeriodActive,
-    mode: isBetaMode() ? 'BETA' : 'NATURAL',
+    mode: isBetaModeSync() ? 'BETA' : 'NATURAL',
   };
 }

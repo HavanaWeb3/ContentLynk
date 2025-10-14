@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { getCurrentModeConfig, isBetaMode } from '@/config/platform-mode';
+import { getCurrentModeConfig, isBetaModeSync } from '@/config/platform-mode';
 
 export async function GET(req: NextRequest) {
   try {
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       today: Number(todayEarnings._sum.amount || 0),
       pending: Number(pendingEarnings._sum.amount || 0),
       transactionCount: totalEarnings._count,
-      mode: isBetaMode() ? 'BETA' : 'NATURAL',
+      mode: isBetaModeSync() ? 'BETA' : 'NATURAL',
       caps: {
         perPost: config.caps.perPost,
         daily: config.caps.daily
