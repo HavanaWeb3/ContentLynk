@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
             username: true,
             status: true,
             suspendedAt: true,
+            probationUntil: true,
           },
         },
       },

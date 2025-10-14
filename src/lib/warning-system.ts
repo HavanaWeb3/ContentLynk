@@ -285,13 +285,14 @@ export class WarningSystem {
     const now = new Date()
     const canEarn =
       user.status === 'ACTIVE' ||
-      (user.status === 'PROBATION' && user.probationUntil && user.probationUntil < now)
+      (user.status === 'PROBATION' && user.probationUntil && user.probationUntil < now) ||
+      false
 
     return {
       status: user.status || 'ACTIVE',
       probationUntil: user.probationUntil,
       suspendedAt: user.suspendedAt,
-      canEarn,
+      canEarn: !!canEarn,
     }
   }
 }

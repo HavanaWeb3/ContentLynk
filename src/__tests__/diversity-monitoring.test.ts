@@ -263,7 +263,6 @@ describe('Diversity Monitoring', () => {
       const issueWarningMock = vi.mocked(warningSystem.issueWarning).mockResolvedValue({
         strikeLevel: 'STRIKE_1',
         action: 'LOG_ONLY',
-        message: 'Warning issued',
       })
 
       const rawEarnings = 100
@@ -310,7 +309,6 @@ describe('Diversity Monitoring', () => {
       vi.mocked(warningSystem.issueWarning).mockResolvedValue({
         strikeLevel: 'STRIKE_1',
         action: 'LOG_ONLY',
-        message: 'Warning',
       })
 
       await applyDiversityMultiplier('post-natural-5', 100)

@@ -27,23 +27,29 @@ export async function GET(req: NextRequest) {
         ...(userId && { userId }),
         ...(resolved && { clearedAt: resolved === 'true' ? { not: null } : null }),
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            status: true,
-          },
-        },
-      },
       orderBy: {
         createdAt: 'desc',
       },
       take: 100,
     })
 
-    return NextResponse.json({ warnings })
+    // Fetch user details separately
+    const warningsWithUsers = await Promise.all(
+      warnings.map(async (warning) => {
+        const user = await prisma.user.findUnique({
+          where: { id: warning.userId },
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            status: true,
+          },
+        })
+        return { ...warning, user }
+      })
+    )
+
+    return NextResponse.json({ warnings: warningsWithUsers })
   } catch (error) {
     console.error('Error fetching warnings:', error)
     return NextResponse.json(
