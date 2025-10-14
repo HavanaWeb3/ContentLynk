@@ -18,10 +18,19 @@ export interface DiversityThreshold {
   description: string
 }
 
+export interface NetworkAnalysisThreshold {
+  suspicionThreshold: number // 0-100 score to flag community
+  action: 'HOLD' | 'WARN'
+  extremeThreshold?: number // Optional higher threshold for extreme cases
+  allowAppeals: boolean
+  description: string
+}
+
 export interface ModeThresholds {
   engagementVelocity: VelocityThreshold
   creatorActivityVelocity: VelocityThreshold
   engagementDiversity: DiversityThreshold
+  networkAnalysis: NetworkAnalysisThreshold
   commentLength: {
     min: number
     suspicious: number
@@ -47,6 +56,13 @@ export const DETECTION_THRESHOLDS: Record<'BETA' | 'NATURAL', ModeThresholds> = 
       penalty: 0.5, // 50% earnings reduction
       action: 'APPLY_PENALTY',
       description: 'Apply 50% penalty when most engagement comes from small group',
+    },
+    networkAnalysis: {
+      suspicionThreshold: 70, // Flag communities with score >70
+      action: 'HOLD',
+      extremeThreshold: 90, // Extreme gaming pods
+      allowAppeals: false,
+      description: 'Aggressive flagging - auto-hold all member earnings for review',
     },
     commentLength: {
       min: 3,
@@ -75,6 +91,13 @@ export const DETECTION_THRESHOLDS: Record<'BETA' | 'NATURAL', ModeThresholds> = 
       extremeThreshold: 95, // Only flag extreme concentration (95%+)
       action: 'WARN',
       description: 'Trust natural communities; only warn on extreme concentration (95%+)',
+    },
+    networkAnalysis: {
+      suspicionThreshold: 85, // Only flag obvious gaming (score >85)
+      action: 'WARN',
+      extremeThreshold: 95, // Extreme cases may hold after 2+ warnings
+      allowAppeals: true,
+      description: 'Conservative flagging - issue warnings, allow appeals, only hold repeat offenders',
     },
     commentLength: {
       min: 3,
