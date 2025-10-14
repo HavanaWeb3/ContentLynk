@@ -12,6 +12,7 @@ datasource db {
 model User {
   id              String         @id @default(cuid())
   email           String?        @unique
+  password        String?        // Hashed password for credential auth
   walletAddress   String?        @unique
   username        String         @unique
   displayName     String?
@@ -264,4 +265,20 @@ model SmsRateLimit {
   @@index([phoneNumber])
   @@index([sentAt])
   @@map("sms_rate_limit")
+}
+
+// Password Reset Tokens
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expires   DateTime
+  used      Boolean  @default(false)
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([token])
+  @@index([expires])
+  @@map("password_reset_tokens")
 }

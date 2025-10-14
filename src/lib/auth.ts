@@ -73,18 +73,16 @@ export const authOptions: NextAuthOptions = {
             // Hash password
             const hashedPassword = await bcrypt.hash(validatedData.password, 12)
 
-            // Create new user
+            // Create new user with hashed password
             const user = await prisma.user.create({
               data: {
                 email: validatedData.email,
                 username: validatedData.username,
                 displayName: validatedData.displayName || validatedData.username,
-                // Note: We'll store password in a separate table for security
+                password: hashedPassword,
               },
             })
 
-            // For now, return the user without storing password
-            // In production, implement proper password storage
             return {
               id: user.id,
               email: user.email!,
@@ -103,12 +101,20 @@ export const authOptions: NextAuthOptions = {
               where: { email: validatedData.email },
             })
 
-            if (!user) {
+            if (!user || !user.password) {
               return null
             }
 
-            // For MVP, we'll implement simple auth
-            // In production, verify password hash
+            // Verify password hash
+            const isPasswordValid = await bcrypt.compare(
+              validatedData.password,
+              user.password
+            )
+
+            if (!isPasswordValid) {
+              return null
+            }
+
             return {
               id: user.id,
               email: user.email!,
