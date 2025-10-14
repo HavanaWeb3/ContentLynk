@@ -92,6 +92,8 @@ export const authOptions: NextAuthOptions = {
             }
           } else {
             // Login attempt
+            console.log('Login attempt for:', credentials.email)
+
             const validatedData = loginSchema.parse({
               email: credentials.email,
               password: credentials.password,
@@ -101,7 +103,11 @@ export const authOptions: NextAuthOptions = {
               where: { email: validatedData.email },
             })
 
+            console.log('User found:', !!user)
+            console.log('User has password:', !!user?.password)
+
             if (!user || !user.password) {
+              console.log('Login failed: No user or no password')
               return null
             }
 
@@ -111,10 +117,14 @@ export const authOptions: NextAuthOptions = {
               user.password
             )
 
+            console.log('Password valid:', isPasswordValid)
+
             if (!isPasswordValid) {
+              console.log('Login failed: Invalid password')
               return null
             }
 
+            console.log('Login successful for:', user.email)
             return {
               id: user.id,
               email: user.email!,
