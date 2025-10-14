@@ -76,6 +76,12 @@ model Post {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Diversity tracking fields
+  diversityScore      Float?   @map("diversity_score")
+  top10Percentage     Float?   @map("top10_percentage")
+  diversityPenalty    Float?   @map("diversity_penalty")
+  lastDiversityCheck  DateTime? @map("last_diversity_check")
+
   // Relations
   postLikes   Like[]
   postComments Comment[]
@@ -281,4 +287,44 @@ model PasswordResetToken {
   @@index([token])
   @@index([expires])
   @@map("password_reset_tokens")
+}
+
+// Creator Warnings - Progressive strike system
+model CreatorWarning {
+  id          String    @id @default(cuid())
+  userId      String
+  reason      String
+  details     Json      @default("{}")
+  strikeLevel String
+  message     String
+  action      String
+  expiresAt   DateTime?
+  clearedAt   DateTime?
+  clearedBy   String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([clearedAt])
+  @@map("creator_warnings")
+}
+
+// Flagged Content - Content under review for violations
+model FlaggedContent {
+  id          String    @id @default(cuid())
+  contentId   String
+  contentType String    // POST, COMMENT, USER
+  reason      String
+  details     Json      @default("{}")
+  flaggedAt   DateTime  @default(now())
+  resolved    Boolean   @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([contentId])
+  @@index([resolved])
+  @@index([createdAt])
+  @@map("flagged_content")
 }
