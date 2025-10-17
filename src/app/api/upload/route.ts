@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { put } from '@vercel/blob'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,45 +40,20 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now()
     const randomId = Math.random().toString(36).substring(7)
     const extension = file.name.split('.').pop() || 'jpg'
-    const filename = `${timestamp}-${randomId}.${extension}`
+    const blobFilename = `posts/${session.user.id}/${timestamp}-${randomId}.${extension}`
 
     try {
-      // For development, save to public/uploads directory
-      // In production with real Vercel Blob token, upload to Vercel Blob Storage
-      if (process.env.BLOB_READ_WRITE_TOKEN === 'demo-token-replace-with-real-vercel-blob-token') {
-        // Development mode - save file to public/uploads directory
-        const bytes = await file.arrayBuffer()
-        const buffer = Buffer.from(bytes)
-
-        // Create uploads directory structure
-        const uploadsDir = join(process.cwd(), 'public', 'uploads', session.user.id)
-        await mkdir(uploadsDir, { recursive: true })
-
-        // Save file
-        const filePath = join(uploadsDir, filename)
-        await writeFile(filePath, buffer)
-
-        // Return URL that can be accessed by the browser
-        const publicUrl = `/uploads/${session.user.id}/${filename}`
-
-        console.log('🖼️ Image upload debug:')
-        console.log('- File name:', file.name)
-        console.log('- File size:', file.size)
-        console.log('- File type:', file.type)
-        console.log('- Saved to:', filePath)
-        console.log('- Public URL:', publicUrl)
-
-        return NextResponse.json({
-          url: publicUrl,
-          filename: file.name
-        })
-      }
-
-      // Production mode - upload to Vercel Blob
-      const blobFilename = `posts/${session.user.id}/${filename}`
+      // Upload to Vercel Blob Storage
+      // Note: Vercel automatically provides BLOB_READ_WRITE_TOKEN when blob store is linked
       const blob = await put(blobFilename, file, {
         access: 'public',
       })
+
+      console.log('🖼️ Image upload success:')
+      console.log('- File name:', file.name)
+      console.log('- File size:', file.size)
+      console.log('- File type:', file.type)
+      console.log('- Blob URL:', blob.url)
 
       return NextResponse.json({
         url: blob.url,
@@ -88,8 +61,13 @@ export async function POST(request: NextRequest) {
       })
     } catch (uploadError) {
       console.error('Upload error:', uploadError)
+      console.error('Blob token present:', !!process.env.BLOB_READ_WRITE_TOKEN)
+
       return NextResponse.json(
-        { error: 'Failed to upload image' },
+        {
+          error: 'Failed to upload image. Please ensure Vercel Blob storage is configured.',
+          details: uploadError instanceof Error ? uploadError.message : 'Unknown error'
+        },
         { status: 500 }
       )
     }
