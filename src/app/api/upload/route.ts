@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { put } from '@vercel/blob'
+import { writeFile, mkdir } from 'fs/promises'
+import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,32 +42,43 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now()
     const randomId = Math.random().toString(36).substring(7)
     const extension = file.name.split('.').pop() || 'jpg'
-    const filename = `posts/${session.user.id}/${timestamp}-${randomId}.${extension}`
+    const filename = `${timestamp}-${randomId}.${extension}`
 
     try {
-      // For development, we'll simulate the upload and return a placeholder URL
-      // In production with real Vercel Blob token, this would upload to Vercel Blob Storage
+      // For development, save to public/uploads directory
+      // In production with real Vercel Blob token, upload to Vercel Blob Storage
       if (process.env.BLOB_READ_WRITE_TOKEN === 'demo-token-replace-with-real-vercel-blob-token') {
-        // Development mode - convert file to base64 data URL to show actual uploaded image
+        // Development mode - save file to public/uploads directory
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
-        const base64 = buffer.toString('base64')
-        const dataUrl = `data:${file.type};base64,${base64}`
+
+        // Create uploads directory structure
+        const uploadsDir = join(process.cwd(), 'public', 'uploads', session.user.id)
+        await mkdir(uploadsDir, { recursive: true })
+
+        // Save file
+        const filePath = join(uploadsDir, filename)
+        await writeFile(filePath, buffer)
+
+        // Return URL that can be accessed by the browser
+        const publicUrl = `/uploads/${session.user.id}/${filename}`
 
         console.log('🖼️ Image upload debug:')
         console.log('- File name:', file.name)
         console.log('- File size:', file.size)
         console.log('- File type:', file.type)
-        console.log('- Data URL length:', dataUrl.length)
+        console.log('- Saved to:', filePath)
+        console.log('- Public URL:', publicUrl)
 
         return NextResponse.json({
-          url: dataUrl,
+          url: publicUrl,
           filename: file.name
         })
       }
 
       // Production mode - upload to Vercel Blob
-      const blob = await put(filename, file, {
+      const blobFilename = `posts/${session.user.id}/${filename}`
+      const blob = await put(blobFilename, file, {
         access: 'public',
       })
 
