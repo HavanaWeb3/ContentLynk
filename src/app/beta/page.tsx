@@ -61,9 +61,9 @@ export default function BetaPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-havana relative">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+      <nav className="bg-havana-navy-light/90 backdrop-blur-md border-b border-havana-cyan/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Link href="/" className="flex items-center gap-3 group">
@@ -76,7 +76,7 @@ export default function BetaPage() {
                   priority
                 />
               </div>
-              <span className="text-2xl font-bold text-indigo-600">Contentlynk</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-havana-cyan to-havana-orange bg-clip-text text-transparent">Contentlynk</span>
             </Link>
             <div className="flex items-center space-x-4">
               <Link href="/">
@@ -91,7 +91,7 @@ export default function BetaPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20 px-4">
+      <section className="bg-gradient-warm text-white py-20 px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Hero Logo */}
           <div className="flex justify-center mb-8 animate-fadeInDown">
@@ -117,12 +117,12 @@ export default function BetaPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#apply">
-              <Button size="lg" className="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 text-lg">
+              <Button size="lg" className="bg-white text-havana-orange hover:bg-havana-navy hover:text-white border-2 border-white hover:border-havana-cyan px-8 py-4 text-lg font-bold transition-all">
                 Apply for Beta Access
               </Button>
             </a>
             <Link href="/earnings-calculator">
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg">
+              <Button variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white/20 px-8 py-4 text-lg">
                 Calculate Your Earnings
               </Button>
             </Link>
@@ -131,59 +131,75 @@ export default function BetaPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-havana-navy-dark/50 backdrop-blur-sm relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-md text-center">
-              <div className="text-4xl md:text-5xl font-bold text-indigo-600 mb-2">1,000</div>
-              <div className="text-gray-600 text-lg">Beta Creator Spots</div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl shadow-lg border-2 border-havana-cyan/30 text-center backdrop-blur-md hover:border-havana-cyan transition-all">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-havana-cyan to-havana-purple bg-clip-text text-transparent mb-2">1,000</div>
+              <div className="text-havana-cyan-light text-lg">Beta Creator Spots</div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-md text-center">
-              <div className="text-4xl md:text-5xl font-bold text-indigo-600 mb-2">55-75%</div>
-              <div className="text-gray-600 text-lg">Revenue Share</div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl shadow-lg border-2 border-havana-orange/30 text-center backdrop-blur-md hover:border-havana-orange transition-all">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-havana-orange to-havana-pink bg-clip-text text-transparent mb-2">55-75%</div>
+              <div className="text-havana-cyan-light text-lg">Revenue Share</div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-md text-center">
-              <div className="text-4xl md:text-5xl font-bold text-indigo-600 mb-2">$0</div>
-              <div className="text-gray-600 text-lg">Follower Minimum</div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl shadow-lg border-2 border-havana-pink/30 text-center backdrop-blur-md hover:border-havana-pink transition-all">
+              <div className="text-4xl md:text-5xl font-bold text-havana-pink mb-2">$0</div>
+              <div className="text-havana-cyan-light text-lg">Follower Minimum</div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-md text-center">
-              <div className="text-4xl md:text-5xl font-bold text-indigo-600 mb-2">Q2 2026</div>
-              <div className="text-gray-600 text-lg">Beta Launch</div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl shadow-lg border-2 border-havana-purple/30 text-center backdrop-blur-md hover:border-havana-purple transition-all">
+              <div className="text-4xl md:text-5xl font-bold text-havana-purple mb-2">Q2 2026</div>
+              <div className="text-havana-cyan-light text-lg">Beta Launch</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Why Join Contentlynk Beta?</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">Why Join Contentlynk Beta?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: '🚀', title: 'No Gatekeeping', description: 'Start earning from your very first post. No follower minimums, no view requirements, no waiting periods.' },
-              { icon: '💰', title: 'Fair Revenue Sharing', description: 'Earn 55-75% of platform revenue based on your tier - up to 15x more than traditional platforms.' },
-              { icon: '🎯', title: 'Quality Over Quantity', description: 'Our algorithm rewards meaningful engagement. Comments and shares count 5-20x more than likes.' },
-              { icon: '💎', title: 'NFT Bonuses', description: 'Creator Pass NFT holders earn an additional 50% bonus on all content. Be a founding member.' },
-              { icon: '🔒', title: 'Transparent Payments', description: 'Blockchain-verified earnings with real-time analytics. You\'ll always know exactly what you\'re earning.' },
-              { icon: '🎨', title: 'You Own Your Content', description: 'Complete content ownership with governance rights. Help shape the platform\'s future.' }
-            ].map((feature, index) => (
-              <div key={index} className="bg-gray-50 p-8 rounded-2xl">
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-cyan/30 hover:border-havana-cyan transition-all">
+              <div className="text-5xl mb-4">🚀</div>
+              <h3 className="text-xl font-bold mb-3 text-white">No Gatekeeping</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Start earning from your very first post. No follower minimums, no view requirements, no waiting periods.</p>
+            </div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-orange/30 hover:border-havana-orange transition-all">
+              <div className="text-5xl mb-4">💰</div>
+              <h3 className="text-xl font-bold mb-3 text-white">Fair Revenue Sharing</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Earn 55-75% of platform revenue based on your tier - up to 15x more than traditional platforms.</p>
+            </div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-pink/30 hover:border-havana-pink transition-all">
+              <div className="text-5xl mb-4">🎯</div>
+              <h3 className="text-xl font-bold mb-3 text-white">Quality Over Quantity</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Our algorithm rewards meaningful engagement. Comments and shares count 5-20x more than likes.</p>
+            </div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-purple/30 hover:border-havana-purple transition-all">
+              <div className="text-5xl mb-4">💎</div>
+              <h3 className="text-xl font-bold mb-3 text-white">NFT Bonuses</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Creator Pass NFT holders earn an additional 50% bonus on all content. Be a founding member.</p>
+            </div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-cyan/30 hover:border-havana-cyan transition-all">
+              <div className="text-5xl mb-4">🔒</div>
+              <h3 className="text-xl font-bold mb-3 text-white">Transparent Payments</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Blockchain-verified earnings with real-time analytics. You'll always know exactly what you're earning.</p>
+            </div>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-orange/30 hover:border-havana-orange transition-all">
+              <div className="text-5xl mb-4">🎨</div>
+              <h3 className="text-xl font-bold mb-3 text-white">You Own Your Content</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Complete content ownership with governance rights. Help shape the platform's future.</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Comparison Section */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-havana-navy-dark/50 backdrop-blur-sm relative z-10">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Traditional Platforms vs Contentlynk</h2>
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">Traditional Platforms vs Contentlynk</h2>
+          <div className="bg-havana-navy-light/60 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md border-2 border-havana-cyan/30">
             <table className="w-full">
-              <thead className="bg-indigo-600 text-white">
+              <thead className="bg-gradient-warm text-white">
                 <tr>
                   <th className="py-4 px-6 text-left font-semibold">Feature</th>
                   <th className="py-4 px-6 text-left font-semibold">Traditional</th>
@@ -199,10 +215,10 @@ export default function BetaPage() {
                   { feature: 'Platform Governance', traditional: 'Zero control', contentlynk: 'Community voting', highlight: false },
                   { feature: 'Content Ownership', traditional: 'Platform owns', contentlynk: 'You own', highlight: false }
                 ].map((row, index) => (
-                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                    <td className="py-4 px-6 font-medium">{row.feature}</td>
-                    <td className="py-4 px-6 text-gray-600">{row.traditional}</td>
-                    <td className={`py-4 px-6 font-bold ${row.highlight ? 'text-green-600 bg-green-50' : 'text-indigo-600'}`}>
+                  <tr key={index} className={index % 2 === 0 ? 'bg-havana-navy-light/40' : 'bg-havana-navy-dark/40'}>
+                    <td className="py-4 px-6 font-medium text-white">{row.feature}</td>
+                    <td className="py-4 px-6 text-havana-cyan-light">{row.traditional}</td>
+                    <td className={`py-4 px-6 font-bold ${row.highlight ? 'text-havana-cyan bg-havana-cyan/10' : 'text-havana-orange'}`}>
                       {row.contentlynk}
                     </td>
                   </tr>
@@ -214,85 +230,85 @@ export default function BetaPage() {
       </section>
 
       {/* Why 1,000 Creators Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">🎯 Why 1,000 Creators?</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">🎯 Why 1,000 Creators?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold mb-3">Natural Gaming Protection</h3>
-              <p className="text-gray-600 leading-relaxed">Scale provides natural gaming protection through economic dilution</p>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-cyan/30 hover:border-havana-cyan transition-all">
+              <h3 className="text-xl font-bold mb-3 text-havana-cyan">Natural Gaming Protection</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Scale provides natural gaming protection through economic dilution</p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold mb-3">Real Network Effects</h3>
-              <p className="text-gray-600 leading-relaxed">1,000 diverse creators generate real network effects and authentic social dynamics</p>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-orange/30 hover:border-havana-orange transition-all">
+              <h3 className="text-xl font-bold mb-3 text-havana-orange">Real Network Effects</h3>
+              <p className="text-havana-cyan-light leading-relaxed">1,000 diverse creators generate real network effects and authentic social dynamics</p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold mb-3">Complete Testing Coverage</h3>
-              <p className="text-gray-600 leading-relaxed">Larger pool ensures we test with every creator type and content niche</p>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-pink/30 hover:border-havana-pink transition-all">
+              <h3 className="text-xl font-bold mb-3 text-havana-pink">Complete Testing Coverage</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Larger pool ensures we test with every creator type and content niche</p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold mb-3">Coordination Resistance</h3>
-              <p className="text-gray-600 leading-relaxed">Coordination becomes mathematically impossible with this many participants</p>
+            <div className="bg-havana-navy-light/60 p-8 rounded-2xl backdrop-blur-md border-2 border-havana-purple/30 hover:border-havana-purple transition-all">
+              <h3 className="text-xl font-bold mb-3 text-havana-purple">Coordination Resistance</h3>
+              <p className="text-havana-cyan-light leading-relaxed">Coordination becomes mathematically impossible with this many participants</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Earnings Calculator CTA */}
-      <section className="py-16 px-4 text-center bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+      <section className="py-16 px-4 text-center bg-gradient-warm text-white relative z-10">
         <h2 className="text-4xl font-bold mb-4">See What You Could Earn</h2>
         <p className="text-xl mb-8 opacity-95">
           Calculate your potential monthly earnings based on your typical engagement
         </p>
         <Link href="/earnings-calculator">
-          <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 text-lg">
+          <Button size="lg" className="bg-white text-havana-orange hover:bg-havana-navy hover:text-white border-2 border-white hover:border-havana-cyan px-8 py-4 text-lg font-bold transition-all">
             Try Earnings Calculator →
           </Button>
         </Link>
       </section>
 
       {/* Beta Application Section */}
-      <section id="apply" className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <section id="apply" className="py-16 px-4 bg-gradient-cool text-white relative z-10">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-4">Apply for Beta Access</h2>
           <p className="text-xl text-center mb-8 opacity-95">
             Be among the first 1,000 creators to shape the future of fair creator compensation
           </p>
 
-          <form onSubmit={handleSubmit} className="bg-white text-gray-900 p-8 rounded-2xl shadow-xl">
+          <form onSubmit={handleSubmit} className="bg-havana-navy-light/90 backdrop-blur-md text-white p-8 rounded-2xl shadow-xl border-2 border-havana-cyan/30">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold mb-2">Full Name *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Full Name *</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Email Address *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Email Address *</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Current Platform(s) *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Current Platform(s) *</label>
                 <select
                   name="platform"
                   value={formData.platform}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan"
                 >
                   <option value="">Select primary platform</option>
                   <option value="instagram">Instagram</option>
@@ -305,7 +321,7 @@ export default function BetaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Content Niche *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Content Niche *</label>
                 <input
                   type="text"
                   name="niche"
@@ -313,12 +329,12 @@ export default function BetaPage() {
                   onChange={handleChange}
                   placeholder="e.g., Fashion, Tech, Lifestyle"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan placeholder-havana-cyan-light/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Typical Monthly Posts *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Typical Monthly Posts *</label>
                 <input
                   type="number"
                   name="posts"
@@ -326,12 +342,12 @@ export default function BetaPage() {
                   onChange={handleChange}
                   placeholder="e.g., 20"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan placeholder-havana-cyan-light/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Average Post Engagement *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Average Post Engagement *</label>
                 <input
                   type="text"
                   name="engagement"
@@ -339,32 +355,32 @@ export default function BetaPage() {
                   onChange={handleChange}
                   placeholder="e.g., 500 likes, 50 comments"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan placeholder-havana-cyan-light/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Why do you want to join Contentlynk beta? *</label>
+                <label className="block text-sm font-semibold mb-2 text-havana-cyan">Why do you want to join Contentlynk beta? *</label>
                 <textarea
                   name="reason"
                   value={formData.reason}
                   onChange={handleChange}
                   rows={4}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-havana-navy-dark/60 border border-havana-cyan/30 text-white rounded-lg focus:ring-2 focus:ring-havana-cyan focus:border-havana-cyan"
                 ></textarea>
               </div>
 
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 text-lg font-semibold hover:from-indigo-700 hover:to-purple-700"
+                className="w-full bg-gradient-warm text-white py-3 text-lg font-semibold hover:shadow-lg hover:shadow-havana-pink/50 transition-all"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Beta Application'}
               </Button>
 
               {message && (
-                <div className={`p-4 rounded-lg ${message.includes('Thank you') ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                <div className={`p-4 rounded-lg ${message.includes('Thank you') ? 'bg-havana-cyan/20 text-havana-cyan border-2 border-havana-cyan' : 'bg-havana-pink/20 text-havana-pink border-2 border-havana-pink'}`}>
                   {message}
                 </div>
               )}
@@ -374,9 +390,9 @@ export default function BetaPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">Frequently Asked Questions</h2>
           <div className="space-y-6">
             {[
               {
@@ -408,9 +424,9 @@ export default function BetaPage() {
                 a: 'Larger beta groups prevent coordination and gaming of the reward system through dilution. With 1,000 diverse creators, the platform generates real social dynamics and network effects while making it economically unviable for anyone to game the system. This gives us better data and a more realistic test environment.'
               }
             ].map((faq, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-xl">
-                <h3 className="text-xl font-bold text-indigo-600 mb-3">{faq.q}</h3>
-                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={index} className="bg-havana-navy-light/60 p-6 rounded-xl backdrop-blur-md border-2 border-havana-cyan/30 hover:border-havana-cyan transition-all">
+                <h3 className="text-xl font-bold text-havana-cyan mb-3">{faq.q}</h3>
+                <p className="text-havana-cyan-light leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -418,13 +434,13 @@ export default function BetaPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-havana-navy-dark text-white py-12 px-4 relative z-10 border-t border-havana-cyan/20">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="mb-4">&copy; 2025 Havana Elephant Brand • Contentlynk</p>
+          <p className="mb-4 text-havana-cyan-light">&copy; 2025 Havana Elephant Brand • Contentlynk</p>
           <div className="flex justify-center space-x-6">
-            <Link href="/" className="hover:text-indigo-400 transition-colors">Home</Link>
-            <Link href="/earnings-calculator" className="hover:text-indigo-400 transition-colors">Calculator</Link>
-            <a href="mailto:beta@havanaelephant.com" className="hover:text-indigo-400 transition-colors">Contact</a>
+            <Link href="/" className="hover:text-havana-cyan transition-colors">Home</Link>
+            <Link href="/earnings-calculator" className="hover:text-havana-orange transition-colors">Calculator</Link>
+            <a href="mailto:beta@havanaelephant.com" className="hover:text-havana-pink transition-colors">Contact</a>
           </div>
         </div>
       </footer>

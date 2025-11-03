@@ -3,27 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+  /* Havana Elephant Brand Colors */
+  --havana-navy: 10, 22, 40;
+  --havana-navy-light: 26, 35, 50;
+  --havana-navy-dark: 13, 27, 42;
+  --havana-cyan: 0, 217, 255;
+  --havana-cyan-light: 77, 208, 225;
+  --havana-orange: 255, 152, 0;
+  --havana-pink: 255, 0, 110;
+  --havana-purple: 156, 39, 176;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  /* Text Colors */
+  --foreground-rgb: 255, 255, 255;
+  --foreground-secondary: 77, 208, 225;
+  --background-rgb: 10, 22, 40;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom right, #0a1628, #1a2332, #0d1b2a);
+  position: relative;
 }
 
 /* Logo Animations */
