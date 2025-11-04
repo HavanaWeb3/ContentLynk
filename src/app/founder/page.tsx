@@ -263,7 +263,7 @@ export default function FounderPage() {
                     <ul className="space-y-3">
                       <li className="flex items-start">
                         <span className="text-havana-cyan mr-3 text-xl">✅</span>
-                        <span>Proven e-commerce business (Havana Elephant Brand) generating revenue</span>
+                        <span>Proven e-commerce business (<a href="https://havanaelephantbrand.com" target="_blank" rel="noopener noreferrer" className="text-havana-orange hover:text-havana-yellow underline font-semibold">Havana Elephant Brand</a>) generating revenue</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-havana-cyan mr-3 text-xl">✅</span>
@@ -504,7 +504,7 @@ export default function FounderPage() {
             </div>
           </div>
           <div className="border-t border-havana-cyan/20 mt-8 pt-8 text-center text-havana-cyan-light">
-            <p>&copy; 2024 Contentlynk. Built for the Havana Elephant Web3 ecosystem.</p>
+            <p>&copy; 2024 Contentlynk. Built for the <a href="https://havanaelephant.com" target="_blank" rel="noopener noreferrer" className="text-havana-orange hover:text-havana-yellow underline font-semibold">Havana Elephant Web3 ecosystem</a>.</p>
           </div>
         </div>
       </footer>
