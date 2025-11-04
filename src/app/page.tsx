@@ -28,6 +28,9 @@ export default function Home() {
               <Link href="/earnings-calculator">
                 <Button variant="ghost">📊 Earnings Calculator</Button>
               </Link>
+              <Link href="/founder">
+                <Button variant="ghost">Why I Built This</Button>
+              </Link>
               <Link href="/auth/signin">
                 <Button variant="ghost">Sign In</Button>
               </Link>
@@ -289,11 +292,11 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-havana-orange">Community</h4>
+              <h4 className="font-semibold mb-4 text-havana-orange">About</h4>
               <ul className="space-y-2 text-havana-cyan-light">
-                <li className="hover:text-havana-pink cursor-pointer transition-colors">Discord</li>
-                <li className="hover:text-havana-pink cursor-pointer transition-colors">Twitter</li>
-                <li className="hover:text-havana-pink cursor-pointer transition-colors">Telegram</li>
+                <li><Link href="/founder" className="hover:text-havana-pink cursor-pointer transition-colors">Why I Built This</Link></li>
+                <li className="hover:text-havana-pink cursor-pointer transition-colors">Mission</li>
+                <li className="hover:text-havana-pink cursor-pointer transition-colors">Roadmap</li>
                 <li className="hover:text-havana-pink cursor-pointer transition-colors">Blog</li>
               </ul>
             </div>
