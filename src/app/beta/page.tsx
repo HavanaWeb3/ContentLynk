@@ -197,8 +197,9 @@ export default function BetaPage() {
       <section className="py-16 px-4 bg-havana-navy-dark/50 backdrop-blur-sm relative z-10">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12 text-white">Traditional Platforms vs Contentlynk</h2>
-          <div className="bg-havana-navy-light/60 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md border-2 border-havana-cyan/30">
-            <table className="w-full">
+          <div className="overflow-x-auto">
+            <div className="bg-havana-navy-light/60 rounded-2xl shadow-lg overflow-hidden backdrop-blur-md border-2 border-havana-cyan/30">
+              <table className="w-full">
               <thead className="bg-gradient-warm text-white">
                 <tr>
                   <th className="py-4 px-6 text-left font-semibold">Feature</th>
@@ -225,6 +226,7 @@ export default function BetaPage() {
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
         </div>
       </section>
@@ -265,6 +267,99 @@ export default function BetaPage() {
             Try Earnings Calculator →
           </Button>
         </Link>
+      </section>
+
+      {/* Founder Credibility Section */}
+      <section className="py-16 px-4 bg-havana-navy-dark/70 backdrop-blur-sm relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">Why Trust This Platform?</h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-12">
+            {/* Founder Photo - Left Column */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-cool opacity-30 blur-2xl rounded-full"></div>
+                <div className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-havana-cyan/50 shadow-2xl hover:border-havana-cyan transition-all duration-300">
+                  <Image
+                    src="/images/founder/david-founder-medium.jpg"
+                    alt="David Sime, Founder of Contentlynk"
+                    width={400}
+                    height={267}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Content - Right Two Columns */}
+            <div className="lg:col-span-2 space-y-6 text-havana-cyan-light">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-4">Meet David Sime</h3>
+                <p className="text-lg leading-relaxed mb-4">
+                  After posting content for four years across multiple platforms - hundreds of hours, some viral posts - I earned exactly nothing. And I didn't even own what I created.
+                </p>
+                <p className="text-xl font-semibold text-havana-cyan mb-4">
+                  Sound familiar?
+                </p>
+                <p className="text-lg leading-relaxed mb-4">
+                  With 35+ years building successful businesses (including Elmswood Private Finance: £1.2M in year 2), I've seen what execution looks like. After writing "Digital Ownership Revolution" about using blockchain to benefit the wider community, I realized: I needed to actually <span className="text-white font-semibold">build</span> what I was preaching.
+                </p>
+              </div>
+
+              <div className="bg-havana-navy-light/60 p-6 rounded-xl border-2 border-havana-purple/30 backdrop-blur-md">
+                <h4 className="text-xl font-bold text-havana-purple mb-3">Why This Is Different:</h4>
+                <p className="text-lg leading-relaxed mb-4">
+                  This isn't another crypto promise of "maybe someday." The platform is in development <span className="text-havana-cyan font-semibold">now</span> with a Q2 2026 launch. You're not funding experiments - you're funding the scaling of proven execution backed by working e-commerce and tested smart contracts.
+                </p>
+                <p className="text-lg leading-relaxed mb-4">
+                  Living across the UK, Russia, and now Croatia showed me we're all the same people with vastly different opportunities. Contentlynk gives everyone, everywhere, equal access: your earnings go directly to your crypto wallet, no geographic restrictions.
+                </p>
+                <p className="text-lg leading-relaxed text-white font-semibold">
+                  Life's too short (my father died at 48, my uncle at 42) for creators to work for free while platforms profit billions.
+                </p>
+              </div>
+
+              <div className="text-center lg:text-left">
+                <Link href="/founder">
+                  <Button variant="outline" className="border-2 border-havana-cyan text-havana-cyan hover:bg-havana-cyan hover:text-white px-6 py-3 text-base font-semibold transition-all">
+                    Read Full Founder Story →
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-gradient-to-br from-havana-cyan/20 to-havana-purple/20 p-6 rounded-xl border-2 border-havana-cyan/40 backdrop-blur-md text-center hover:border-havana-cyan transition-all">
+              <div className="text-4xl mb-3">🏆</div>
+              <div className="text-2xl font-bold text-havana-cyan mb-2">35+ Years</div>
+              <div className="text-havana-cyan-light">Business Experience</div>
+            </div>
+            <div className="bg-gradient-to-br from-havana-orange/20 to-havana-pink/20 p-6 rounded-xl border-2 border-havana-orange/40 backdrop-blur-md text-center hover:border-havana-orange transition-all">
+              <div className="text-4xl mb-3">📚</div>
+              <div className="text-2xl font-bold text-havana-orange mb-2">Published Author</div>
+              <div className="text-havana-cyan-light">"Digital Ownership Revolution"</div>
+            </div>
+            <div className="bg-gradient-to-br from-havana-pink/20 to-havana-purple/20 p-6 rounded-xl border-2 border-havana-pink/40 backdrop-blur-md text-center hover:border-havana-pink transition-all">
+              <div className="text-4xl mb-3">💼</div>
+              <div className="text-2xl font-bold text-havana-pink mb-2">Proven Execution</div>
+              <div className="text-havana-cyan-light">£1.2M+ Revenue Track Record</div>
+            </div>
+          </div>
+
+          {/* Final CTA */}
+          <div className="text-center mt-12">
+            <p className="text-xl text-white font-semibold mb-4">
+              Join the 1,000 beta creators building the future of fair creator compensation
+            </p>
+            <a href="#apply">
+              <Button size="lg" className="bg-gradient-cool text-white hover:shadow-lg hover:shadow-havana-purple/50 px-8 py-4 text-lg font-bold transition-all">
+                Apply for Beta Access Below ↓
+              </Button>
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Beta Application Section */}
