@@ -404,7 +404,7 @@ export default function FounderPage() {
                     </div>
                     <div className="pt-4 border-t border-havana-cyan/20">
                       <a
-                        href="https://www.linkedin.com/in/davidsime"
+                        href="https://www.linkedin.com/in/davidjsime"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 text-havana-cyan hover:text-havana-cyan-light transition-colors"
@@ -456,7 +456,7 @@ export default function FounderPage() {
                 Join Beta Waitlist
               </Button>
             </Link>
-            <a href="https://www.amazon.com/Digital-Ownership-Revolution-Blockchain-Economy/dp/B0DM8YQJXN" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.amazon.com/dp/B0FRG3F4WY" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-havana-purple px-8 py-4 text-lg font-bold transition-all w-full sm:w-auto">
                 📚 Read Digital Ownership Revolution
               </Button>
