@@ -104,7 +104,7 @@ function AdminDashboardContent() {
                 onClick={() => !tab.disabled && handleTabChange(tab.id as TabType)}
                 disabled={tab.disabled}
                 className={`
-                  flex items-center gap-2 px-6 py-3 font-medium rounded-t-lg transition whitespace-nowrap
+                  flex items-center gap-2 px-3 md:px-6 py-3 font-medium rounded-t-lg transition whitespace-nowrap
                   ${activeTab === tab.id
                     ? 'bg-gray-50 dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400'
                     : tab.disabled

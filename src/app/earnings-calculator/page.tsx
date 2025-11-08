@@ -329,6 +329,24 @@ export default function EarningsCalculator() {
           .earnings-display .amount {
             font-size: 2.5em;
           }
+          .calculator-body {
+            padding: 30px 20px;
+          }
+          .results {
+            padding: 20px 15px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .earnings-calculator-page {
+            padding: 15px;
+          }
+          .calculator-body {
+            padding: 25px 15px;
+          }
+          .results {
+            padding: 20px 12px;
+          }
         }
       `}</style>
 
