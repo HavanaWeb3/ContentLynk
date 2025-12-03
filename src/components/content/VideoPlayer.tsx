@@ -4,6 +4,9 @@ import { useState, useRef, useEffect } from 'react'
 import ReactPlayer from 'react-player'
 import { Play, Pause, Volume2, VolumeX, Maximize, Settings } from 'lucide-react'
 
+// Type-safe wrapper for ReactPlayer to avoid type conflicts
+const Player = ReactPlayer as any
+
 interface VideoPlayerProps {
   url: string
   thumbnail?: string
@@ -139,8 +142,7 @@ export function VideoPlayer({
       onMouseLeave={() => playing && setShowControls(false)}
     >
       {/* Video Player */}
-      {/* @ts-ignore - ReactPlayer types are complex */}
-      <ReactPlayer
+      <Player
         ref={playerRef}
         url={url}
         playing={playing}
