@@ -9,7 +9,6 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin'
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary'
 import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { ListItemNode, ListNode } from '@lexical/list'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
@@ -121,7 +120,10 @@ export function RichTextEditor({
                   {placeholder}
                 </div>
               }
-              ErrorBoundary={LexicalErrorBoundary}
+              ErrorBoundary={({ error }: { error: Error }) => {
+                console.error('Lexical error:', error)
+                return <div className="text-red-500 p-4">Editor error occurred</div>
+              }}
             />
           </div>
 
