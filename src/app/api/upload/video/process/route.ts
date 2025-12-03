@@ -53,10 +53,14 @@ export async function POST(request: NextRequest) {
       const tempPath = path.join(os.tmpdir(), `process-${Date.now()}-${filename || 'video.mp4'}`)
 
       // Stream S3 object to file
+      if (!response.Body) {
+        throw new Error('No video data received from S3')
+      }
+
       if (response.Body instanceof Readable) {
         const writeStream = require('fs').createWriteStream(tempPath)
         await new Promise((resolve, reject) => {
-          response.Body.pipe(writeStream)
+          response.Body!.pipe(writeStream)
           writeStream.on('finish', resolve)
           writeStream.on('error', reject)
         })
