@@ -9,14 +9,9 @@ import dynamic from 'next/dynamic'
 import { VideoPlayer } from '@/components/content/VideoPlayer'
 import { FileVideo, FileText, MessageSquare, Upload, X } from 'lucide-react'
 
-// Dynamically import RichTextEditor to avoid SSR issues with Lexical
-const RichTextEditor = dynamic(
-  () => import('@/components/content/RichTextEditor').then(mod => mod.RichTextEditor),
-  {
-    ssr: false,
-    loading: () => <div className="p-4 text-gray-500">Loading editor...</div>
-  }
-)
+// Use simple text editor as temporary replacement for Lexical
+// TODO: Fix Lexical SSR issues and switch back to RichTextEditor
+import { SimpleTextEditor as RichTextEditor } from '@/components/content/SimpleTextEditor'
 
 type ContentType = 'TEXT' | 'ARTICLE' | 'VIDEO'
 
