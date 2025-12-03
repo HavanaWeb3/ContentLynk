@@ -154,13 +154,6 @@ export function VideoPlayer({
           setPlaying(false)
           onEnded?.()
         }}
-        config={{
-          file: {
-            attributes: {
-              poster: thumbnail,
-            },
-          },
-        }}
         style={{ position: 'absolute', top: 0, left: 0 }}
       />
 
