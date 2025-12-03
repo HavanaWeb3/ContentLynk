@@ -59,20 +59,51 @@ model User {
 // PLATINUM  - 70% revenue share - Platinum tier NFTs
 // GENESIS   - 75% revenue share - Genesis NFTs
 
-// Content Posts
+// Content Posts - Enhanced for long-form content
 model Post {
   id          String   @id @default(cuid())
+
+  // Basic fields
   title       String?
-  content     String
-  imageUrl    String?
+  content     String   @db.Text // For short posts and article content
+  slug        String?  @unique // SEO-friendly URL slug
+  excerpt     String?  @db.Text // Short description/preview
+
+  // Content type and status
+  contentType String   @default("TEXT") @map("content_type") // TEXT, ARTICLE, VIDEO, SHORT_VIDEO
+  status      String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+
+  // Media fields
+  imageUrl    String? // Featured image (keeping original column name for backward compatibility)
+  videoUrl    String?  @map("video_url") // AWS S3 URL for videos
+  videoThumbnail String? @map("video_thumbnail") // Video thumbnail URL
+  videoDuration Int?    @map("video_duration") // Duration in seconds
+  videoProcessed Boolean @default(false) @map("video_processed") // Processing status
+
+  // SEO fields
+  metaTitle       String? @map("meta_title")
+  metaDescription String? @map("meta_description") @db.Text
+  tags            String[] @default([]) // Array of tags
+  category        String? // Content category
+
+  // Article-specific fields
+  readingTime     Int?    @map("reading_time") // Estimated reading time in minutes
+  articleContent  Json?   @map("article_content") // Rich text JSON from Lexical editor
+
+  // Author and relations
   authorId    String
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Engagement metrics
   views       Int      @default(0)
   likes       Int      @default(0)
   comments    Int      @default(0)
   shares      Int      @default(0)
   earnings    Decimal  @default(0)
-  isPublished Boolean  @default(true)
+
+  // Timestamps
+  isPublished Boolean  @default(true) // Legacy field, use status instead
+  publishedAt DateTime? @map("published_at") // When content was published
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -85,8 +116,50 @@ model Post {
   // Relations
   postLikes   Like[]
   postComments Comment[]
+  videoClips  VideoClip[] // Related video clips/snippets
 
+  @@index([authorId])
+  @@index([contentType])
+  @@index([status])
+  @@index([slug])
+  @@index([publishedAt])
   @@map("posts")
+}
+
+// Video Clips - For TikTok/social media snippets
+model VideoClip {
+  id              String   @id @default(cuid())
+  parentPostId    String   @map("parent_post_id")
+  parentPost      Post     @relation(fields: [parentPostId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?  @db.Text
+
+  // Clip timing (for reference-only clips)
+  startTime       Int      @map("start_time") // Start time in seconds
+  endTime         Int      @map("end_time") // End time in seconds
+
+  // Processed clip (if server-side export is done)
+  clipUrl         String?  @map("clip_url") // AWS S3 URL for exported clip
+  thumbnailUrl    String?  @map("thumbnail_url")
+  processed       Boolean  @default(false) // Whether clip has been exported
+  processingStatus String? @map("processing_status") // PENDING, PROCESSING, COMPLETED, FAILED
+
+  // Clip metadata
+  aspectRatio     String   @default("9:16") @map("aspect_ratio") // 9:16 for TikTok, 16:9 for YouTube
+  duration        Int // Duration in seconds
+  fileSize        Int?     @map("file_size") // File size in bytes if processed
+
+  // Engagement
+  views           Int      @default(0)
+  shares          Int      @default(0)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([parentPostId])
+  @@map("video_clips")
 }
 
 // Earnings Tracking

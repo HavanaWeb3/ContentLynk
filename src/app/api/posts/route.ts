@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { authOptions } from '@/lib/auth'
+import { generateUniqueSlug, calculateReadingTime, generateExcerpt } from '@/lib/slug'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,40 +12,118 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { title, content, imageUrl } = await request.json()
+    const body = await request.json()
+    const {
+      title,
+      content,
+      contentType = 'TEXT',
+      status = 'PUBLISHED',
+      imageUrl,
+      videoUrl,
+      videoThumbnail,
+      videoDuration,
+      articleContent,
+      readingTime,
+      tags = [],
+      category,
+      metaTitle,
+      metaDescription,
+    } = body
 
+    // Validate required fields
     if (!content?.trim()) {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 })
     }
 
-    console.log('📝 Post creation debug:')
+    // Content type-specific validation
+    if (contentType === 'VIDEO' && !videoUrl) {
+      return NextResponse.json({ error: 'Video URL is required for video content' }, { status: 400 })
+    }
+
+    if (contentType === 'ARTICLE' && !title?.trim()) {
+      return NextResponse.json({ error: 'Title is required for articles' }, { status: 400 })
+    }
+
+    console.log('📝 Post creation:')
+    console.log('- Content Type:', contentType)
     console.log('- Title:', title)
-    console.log('- Content:', content?.substring(0, 50) + '...')
-    console.log('- Image URL:', imageUrl)
+    console.log('- Status:', status)
+    console.log('- Tags:', tags)
     console.log('- Author ID:', session.user.id)
+
+    // Generate slug if title is provided (for articles and videos)
+    let slug = null
+    if (title?.trim() && (contentType === 'ARTICLE' || contentType === 'VIDEO')) {
+      slug = await generateUniqueSlug(title, session.user.id)
+    }
+
+    // Generate excerpt if not provided
+    let excerpt = metaDescription
+    if (!excerpt && content) {
+      excerpt = generateExcerpt(content, 160)
+    }
+
+    // Calculate reading time for articles if not provided
+    let finalReadingTime = readingTime
+    if (contentType === 'ARTICLE' && !finalReadingTime && content) {
+      finalReadingTime = calculateReadingTime(content)
+    }
+
+    // Prepare post data
+    const postData: any = {
+      title: title?.trim() || null,
+      content: content.trim(),
+      slug,
+      excerpt,
+      contentType,
+      status,
+      imageUrl: imageUrl || null,
+      tags,
+      category: category || null,
+      metaTitle: metaTitle || title || null,
+      metaDescription: metaDescription || null,
+      authorId: session.user.id,
+      publishedAt: status === 'PUBLISHED' ? new Date() : null,
+    }
+
+    // Add video-specific fields
+    if (contentType === 'VIDEO') {
+      postData.videoUrl = videoUrl
+      postData.videoThumbnail = videoThumbnail || null
+      postData.videoDuration = videoDuration || null
+      postData.videoProcessed = true
+    }
+
+    // Add article-specific fields
+    if (contentType === 'ARTICLE') {
+      postData.articleContent = articleContent || null
+      postData.readingTime = finalReadingTime
+    }
 
     // Create post in database
     const post = await prisma.post.create({
-      data: {
-        title: title?.trim() || null,
-        content: content.trim(),
-        imageUrl: imageUrl || null,
-        authorId: session.user.id,
-      },
+      data: postData,
       include: {
         author: {
           select: {
+            id: true,
             username: true,
             displayName: true,
+            avatar: true,
           }
         }
       }
     })
 
+    console.log('✅ Post created:', post.id, `(${contentType})`)
+
     return NextResponse.json({ post }, { status: 201 })
   } catch (error) {
     console.error('Error creating post:', error)
-    return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to create post', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    )
   }
 }
 
