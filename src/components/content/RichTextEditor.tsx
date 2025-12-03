@@ -14,7 +14,7 @@ import { ListItemNode, ListNode } from '@lexical/list'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
 import { EditorState } from 'lexical'
-import { $generateTextContent } from '@lexical/text'
+import { $rootTextContent } from '@lexical/text'
 
 import { ToolbarPlugin } from './editor/ToolbarPlugin'
 import { AutoLinkPlugin } from './editor/AutoLinkPlugin'
@@ -105,7 +105,7 @@ export function RichTextEditor({
       const json = JSON.stringify(editorState.toJSON())
 
       // Get plain text for reading time calculation using proper Lexical text API
-      const plainText = editorState.read(() => $generateTextContent())
+      const plainText = editorState.read(() => $rootTextContent())
 
       onChange?.(json, plainText)
     } catch (error) {
