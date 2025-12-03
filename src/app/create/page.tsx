@@ -109,22 +109,65 @@ export default function CreateContentPage() {
     if (!videoFile) return null
 
     setIsUploadingVideo(true)
-    const formData = new FormData()
-    formData.append('file', videoFile)
+    setUploadProgress(0)
 
     try {
-      const response = await fetch('/api/upload/video', {
+      // Step 1: Get presigned URL
+      console.log('🔗 Getting presigned URL...')
+      const presignedResponse = await fetch('/api/upload/video/presigned', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: videoFile.name,
+          contentType: videoFile.type,
+          fileSize: videoFile.size,
+        }),
       })
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to upload video')
+      if (!presignedResponse.ok) {
+        const error = await presignedResponse.json()
+        throw new Error(error.error || 'Failed to get upload URL')
       }
 
-      const data = await response.json()
+      const { uploadUrl, key } = await presignedResponse.json()
+
+      // Step 2: Upload directly to S3 using presigned URL
+      console.log('☁️ Uploading video to S3...')
+      const uploadResponse = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: videoFile,
+        headers: {
+          'Content-Type': videoFile.type,
+        },
+      })
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload video to S3')
+      }
+
+      setUploadProgress(50) // Upload complete, now processing
+
+      // Step 3: Process video (extract metadata, generate thumbnail)
+      console.log('🔄 Processing video...')
+      const processResponse = await fetch('/api/upload/video/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoKey: key,
+          filename: videoFile.name,
+        }),
+      })
+
+      if (!processResponse.ok) {
+        const error = await processResponse.json()
+        throw new Error(error.error || 'Failed to process video')
+      }
+
+      const data = await processResponse.json()
+      setUploadProgress(100)
       setVideoMetadata(data.video)
+
+      console.log('✅ Video upload complete!', data.video)
       return data.video
     } catch (error) {
       console.error('Video upload error:', error)

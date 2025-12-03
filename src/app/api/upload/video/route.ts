@@ -7,6 +7,10 @@ import { writeFile, unlink } from 'fs/promises'
 import path from 'path'
 import os from 'os'
 
+// Configure route for large file uploads
+export const runtime = 'nodejs' // Use Node.js runtime (not Edge) for file processing
+export const maxDuration = 300 // 5 minutes max execution time
+
 /**
  * Video Upload API
  *
