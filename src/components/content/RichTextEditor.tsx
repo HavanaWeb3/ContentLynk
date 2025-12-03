@@ -13,7 +13,8 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { ListItemNode, ListNode } from '@lexical/list'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
-import { EditorState, $getRoot } from 'lexical'
+import { EditorState } from 'lexical'
+import { $generateTextContent } from '@lexical/text'
 
 import { ToolbarPlugin } from './editor/ToolbarPlugin'
 import { AutoLinkPlugin } from './editor/AutoLinkPlugin'
@@ -103,12 +104,8 @@ export function RichTextEditor({
       // Get JSON representation of the editor state
       const json = JSON.stringify(editorState.toJSON())
 
-      // Get plain text for reading time calculation using proper Lexical API
-      let plainText = ''
-      editorState.read(() => {
-        const root = $getRoot()
-        plainText = root.getTextContent()
-      })
+      // Get plain text for reading time calculation using proper Lexical text API
+      const plainText = editorState.read(() => $generateTextContent())
 
       onChange?.(json, plainText)
     } catch (error) {
