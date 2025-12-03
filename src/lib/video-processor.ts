@@ -47,7 +47,7 @@ export async function getVideoMetadata(videoPath: string): Promise<VideoMetadata
         width: videoStream.width || 0,
         height: videoStream.height || 0,
         fps: eval(videoStream.r_frame_rate || '0') || 0,
-        bitrate: metadata.format.bit_rate ? parseInt(metadata.format.bit_rate) : 0,
+        bitrate: metadata.format.bit_rate ? Number(metadata.format.bit_rate) : 0,
         codec: videoStream.codec_name || 'unknown',
         size: metadata.format.size || 0,
       })
