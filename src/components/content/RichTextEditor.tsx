@@ -14,10 +14,35 @@ import { ListItemNode, ListNode } from '@lexical/list'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
 import { EditorState } from 'lexical'
-import { $rootTextContent } from '@lexical/text'
 
 import { ToolbarPlugin } from './editor/ToolbarPlugin'
 import { AutoLinkPlugin } from './editor/AutoLinkPlugin'
+
+// Helper function to extract plain text from Lexical JSON
+function extractTextFromLexicalJSON(json: any): string {
+  try {
+    const data = typeof json === 'string' ? JSON.parse(json) : json
+    let text = ''
+
+    const extractTextFromNode = (node: any): void => {
+      if (node.text) {
+        text += node.text
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(extractTextFromNode)
+      }
+    }
+
+    if (data.root) {
+      extractTextFromNode(data.root)
+    }
+
+    return text
+  } catch (error) {
+    console.error('Error extracting text from JSON:', error)
+    return ''
+  }
+}
 
 // Simple ErrorBoundary component for Lexical
 function LexicalErrorBoundary({ error }: any): JSX.Element {
@@ -102,10 +127,11 @@ export function RichTextEditor({
   const handleEditorChange = (editorState: EditorState) => {
     try {
       // Get JSON representation of the editor state
-      const json = JSON.stringify(editorState.toJSON())
+      const jsonData = editorState.toJSON()
+      const json = JSON.stringify(jsonData)
 
-      // Get plain text for reading time calculation using proper Lexical text API
-      const plainText = editorState.read(() => $rootTextContent())
+      // Extract plain text from the JSON structure (avoids Lexical context issues)
+      const plainText = extractTextFromLexicalJSON(jsonData)
 
       onChange?.(json, plainText)
     } catch (error) {
