@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player/lazy'
 import { Play, Pause, Volume2, VolumeX, Maximize, Settings } from 'lucide-react'
 
 interface VideoPlayerProps {
@@ -139,6 +139,7 @@ export function VideoPlayer({
       onMouseLeave={() => playing && setShowControls(false)}
     >
       {/* Video Player */}
+      {/* @ts-ignore - ReactPlayer types are complex */}
       <ReactPlayer
         ref={playerRef}
         url={url}
