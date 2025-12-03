@@ -36,7 +36,7 @@ export function VideoPlayer({
   onEnded,
   className = '',
 }: VideoPlayerProps) {
-  const playerRef = useRef<ReactPlayer>(null)
+  const playerRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const [playing, setPlaying] = useState(autoPlay)
