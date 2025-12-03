@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import ReactPlayer from 'react-player/lazy'
+import ReactPlayer from 'react-player'
 import { Play, Pause, Volume2, VolumeX, Maximize, Settings } from 'lucide-react'
 
 interface VideoPlayerProps {
