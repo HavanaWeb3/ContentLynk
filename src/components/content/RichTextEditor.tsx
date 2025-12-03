@@ -18,6 +18,15 @@ import { EditorState } from 'lexical'
 import { ToolbarPlugin } from './editor/ToolbarPlugin'
 import { AutoLinkPlugin } from './editor/AutoLinkPlugin'
 
+// Simple ErrorBoundary component for Lexical
+function LexicalErrorBoundary({ error }: any): JSX.Element {
+  return (
+    <div className="text-red-500 p-4 border border-red-300 rounded bg-red-50">
+      An error occurred in the editor. Please refresh the page.
+    </div>
+  )
+}
+
 interface RichTextEditorProps {
   initialContent?: string
   onChange?: (content: string, plainText: string) => void
@@ -120,10 +129,7 @@ export function RichTextEditor({
                   {placeholder}
                 </div>
               }
-              ErrorBoundary={({ error }: { error: Error }) => {
-                console.error('Lexical error:', error)
-                return <div className="text-red-500 p-4">Editor error occurred</div>
-              }}
+              ErrorBoundary={LexicalErrorBoundary}
             />
           </div>
 
