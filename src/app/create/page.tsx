@@ -5,9 +5,18 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { RichTextEditor } from '@/components/content/RichTextEditor'
+import dynamic from 'next/dynamic'
 import { VideoPlayer } from '@/components/content/VideoPlayer'
 import { FileVideo, FileText, MessageSquare, Upload, X } from 'lucide-react'
+
+// Dynamically import RichTextEditor to avoid SSR issues with Lexical
+const RichTextEditor = dynamic(
+  () => import('@/components/content/RichTextEditor').then(mod => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <div className="p-4 text-gray-500">Loading editor...</div>
+  }
+)
 
 type ContentType = 'TEXT' | 'ARTICLE' | 'VIDEO'
 
@@ -435,10 +444,10 @@ export default function CreateContentPage() {
                   placeholder="What's on your mind?"
                   rows={8}
                   required
-                  maxLength={1000}
+                  maxLength={10000}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-                <p className="text-sm text-gray-500 mt-2">{content.length}/1000 characters</p>
+                <p className="text-sm text-gray-500 mt-2">{content.length}/10,000 characters</p>
               </CardContent>
             </Card>
           )}
