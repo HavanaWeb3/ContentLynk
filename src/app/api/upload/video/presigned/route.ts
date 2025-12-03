@@ -63,19 +63,19 @@ export async function POST(request: NextRequest) {
     const videoKey = generateVideoKey(session.user.id, filename)
 
     // Get presigned URL (valid for 1 hour)
-    const { uploadUrl, key } = await getPresignedUploadUrl(
+    const uploadUrl = await getPresignedUploadUrl(
       videoKey,
       contentType,
       3600 // 1 hour expiry
     )
 
     console.log('🔗 Presigned URL generated for:', filename)
-    console.log('- Key:', key)
+    console.log('- Key:', videoKey)
     console.log('- Size:', fileSize ? `${(fileSize / 1024 / 1024).toFixed(2)} MB` : 'unknown')
 
     return NextResponse.json({
       uploadUrl,
-      key,
+      key: videoKey,
       expiresIn: 3600,
     })
   } catch (error) {
