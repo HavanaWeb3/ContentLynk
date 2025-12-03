@@ -13,7 +13,7 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { ListItemNode, ListNode } from '@lexical/list'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
-import { EditorState } from 'lexical'
+import { EditorState, $getRoot } from 'lexical'
 
 import { ToolbarPlugin } from './editor/ToolbarPlugin'
 import { AutoLinkPlugin } from './editor/AutoLinkPlugin'
@@ -99,18 +99,23 @@ export function RichTextEditor({
   }
 
   const handleEditorChange = (editorState: EditorState) => {
-    editorState.read(() => {
+    try {
       // Get JSON representation of the editor state
       const json = JSON.stringify(editorState.toJSON())
 
-      // Get plain text for reading time calculation
-      const plainText = editorState.read(() => {
-        const root = editorState._nodeMap.get('root')
-        return root?.getTextContent() || ''
+      // Get plain text for reading time calculation using proper Lexical API
+      let plainText = ''
+      editorState.read(() => {
+        const root = $getRoot()
+        plainText = root.getTextContent()
       })
 
       onChange?.(json, plainText)
-    })
+    } catch (error) {
+      console.error('Error handling editor change:', error)
+      // Still try to call onChange with empty values
+      onChange?.('', '')
+    }
   }
 
   return (
