@@ -57,16 +57,13 @@ export async function POST(request: NextRequest) {
         throw new Error('No video data received from S3')
       }
 
-      if (response.Body instanceof Readable) {
-        const writeStream = require('fs').createWriteStream(tempPath)
-        await new Promise((resolve, reject) => {
-          response.Body!.pipe(writeStream)
-          writeStream.on('finish', resolve)
-          writeStream.on('error', reject)
-        })
-      } else {
-        throw new Error('Unable to read video from S3')
+      // Convert AWS SDK v3 response body to buffer
+      const chunks: Uint8Array[] = []
+      for await (const chunk of response.Body as any) {
+        chunks.push(chunk)
       }
+      const buffer = Buffer.concat(chunks)
+      await writeFile(tempPath, buffer)
 
       // Extract metadata
       console.log('📊 Extracting video metadata...')
