@@ -9,9 +9,8 @@ import dynamic from 'next/dynamic'
 import { VideoPlayer } from '@/components/content/VideoPlayer'
 import { FileVideo, FileText, MessageSquare, Upload, X } from 'lucide-react'
 
-// Use simple text editor as temporary replacement for Lexical
-// TODO: Fix Lexical SSR issues and switch back to RichTextEditor
-import { SimpleTextEditor as RichTextEditor } from '@/components/content/SimpleTextEditor'
+// Use Tiptap editor (better SSR support than Lexical)
+import { TiptapEditor as RichTextEditor } from '@/components/content/TiptapEditor'
 
 type ContentType = 'TEXT' | 'ARTICLE' | 'VIDEO'
 
