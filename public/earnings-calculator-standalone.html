@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contentlynk Earnings Calculator - Enhanced Quality Score</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FBB03B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .calculator-body {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #FF6B35;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .tier-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tier-option {
+            padding: 15px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .tier-option:hover {
+            border-color: #FF6B35;
+        }
+
+        .tier-option.active {
+            border-color: #FF6B35;
+            background: #FFF5F0;
+        }
+
+        .tier-option .tier-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tier-option .tier-share {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .dropdown {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dropdown:hover, .dropdown:focus {
+            border-color: #FF6B35;
+            outline: none;
+        }
+
+        .helper-text {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .slider-group {
+            margin-bottom: 25px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .slider-label .value {
+            font-weight: bold;
+            color: #FF6B35;
+            font-size: 1.3em;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.4);
+        }
+
+        .comment-breakdown {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-breakdown-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .comment-summary {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .comment-summary strong {
+            color: #333;
+        }
+
+        .comment-summary .arrow {
+            color: #FF6B35;
+            margin: 0 5px;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .results {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .earnings-display {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .earnings-display .label {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .earnings-display .amount {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .multipliers-breakdown {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .multipliers-breakdown .breakdown-title {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .multiplier-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .multiplier-item .multiplier-value {
+            font-weight: bold;
+        }
+
+        .monthly-projection {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .monthly-posts {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .post-option {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .post-option:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .post-option.active {
+            background: rgba(255,255,255,0.3);
+            border-color: white;
+        }
+
+        .cta-section {
+            padding: 30px;
+            text-align: center;
+            background: #f9f9f9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(255,107,53,0.3);
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255,107,53,0.4);
+        }
+
+        .cta-note {
+            margin-top: 15px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .earnings-display .amount {
+                font-size: 2.5em;
+            }
+            .calculator-body {
+                padding: 30px 20px;
+            }
+            .results {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .calculator-body {
+                padding: 25px 15px;
+            }
+            .results {
+                padding: 20px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐘 Contentlynk Earnings Calculator</h1>
+        <p>Enhanced with Quality Score - Rewarding depth and meaningful engagement</p>
+    </div>
+
+    <div class="calculator-container">
+        <div class="calculator-body">
+            <!-- Tier Selection -->
+            <div class="section">
+                <h2 class="section-title">🎯 Select Your Tier</h2>
+                <div class="tier-selector" id="tier-selector">
+                    <div class="tier-option active" data-tier="STANDARD">
+                        <div class="tier-name">Standard</div>
+                        <div class="tier-share">55%</div>
+                    </div>
+                    <div class="tier-option" data-tier="SILVER">
+                        <div class="tier-name">Silver</div>
+                        <div class="tier-share">60%</div>
+                    </div>
+                    <div class="tier-option" data-tier="GOLD">
+                        <div class="tier-name">Gold</div>
+                        <div class="tier-share">65%</div>
+                    </div>
+                    <div class="tier-option" data-tier="PLATINUM">
+                        <div class="tier-name">Platinum</div>
+                        <div class="tier-share">70%</div>
+                    </div>
+                    <div class="tier-option" data-tier="GENESIS">
+                        <div class="tier-name">Genesis</div>
+                        <div class="tier-share">75%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Type -->
+            <div class="section">
+                <h2 class="section-title">📝 Content Type & Length</h2>
+                <select class="dropdown" id="content-type">
+                    <option value="TEXT_SHORT">Text Post (short, <1000 chars) - 1.0x multiplier</option>
+                    <option value="TEXT_MEDIUM">Text Post (medium, 1000-5000) - 1.2x multiplier</option>
+                    <option value="TEXT_LONG">Text Post (long, 5000+) - 1.3x multiplier</option>
+                    <option value="ARTICLE_SHORT">Article (<5 min read) - 1.2x multiplier</option>
+                    <option value="ARTICLE_MEDIUM" selected>Article (5-10 min read) - 1.3x multiplier</option>
+                    <option value="ARTICLE_LONG">Article (10+ min read) - 1.5x multiplier</option>
+                    <option value="VIDEO_SHORT">Video (<5 min) - 1.1x multiplier</option>
+                    <option value="VIDEO_MEDIUM">Video (5-15 min) - 1.3x multiplier</option>
+                    <option value="VIDEO_LONG">Video (15+ min) - 1.5x multiplier</option>
+                    <option value="SHORT_VIDEO">Short Video (TikTok/Reels) - 1.0x multiplier</option>
+                </select>
+            </div>
+
+            <!-- Completion Rate -->
+            <div class="section">
+                <h2 class="section-title">📊 Completion Rate</h2>
+                <p class="helper-text">How much of your content do viewers typically consume?</p>
+                <select class="dropdown" id="completion-rate">
+                    <option value="LOW"><50% (low engagement) - 0.85x multiplier</option>
+                    <option value="MEDIUM" selected>50-69% (moderate) - 1.0x multiplier</option>
+                    <option value="HIGH">70-84% (good) - 1.15x multiplier</option>
+                    <option value="VERY_HIGH">85%+ (excellent) - 1.3x multiplier</option>
+                </select>
+            </div>
+
+            <!-- Engagement Inputs -->
+            <div class="section">
+                <h2 class="section-title">💬 Your Typical Post Engagement</h2>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>👍 Likes</span>
+                        <span class="value" id="likes-value">100</span>
+                    </div>
+                    <input type="range" id="likes-slider" min="0" max="1000" value="100" step="10">
+                </div>
+
+                <!-- Comment Breakdown -->
+                <div class="comment-breakdown">
+                    <div class="comment-breakdown-title">💬 Comments by Quality</div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Short (<50 chars) - 2x weight</span>
+                            <span class="value" id="short-comments-value">5</span>
+                        </div>
+                        <input type="range" id="short-comments-slider" min="0" max="50" value="5" step="1">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Medium (50-200 chars) - 5x weight</span>
+                            <span class="value" id="medium-comments-value">15</span>
+                        </div>
+                        <input type="range" id="medium-comments-slider" min="0" max="50" value="15" step="1">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Long (200+ chars) - 8x weight</span>
+                            <span class="value" id="long-comments-value">5</span>
+                        </div>
+                        <input type="range" id="long-comments-slider" min="0" max="20" value="5" step="1">
+                    </div>
+
+                    <div class="comment-summary">
+                        <strong>Total Comments:</strong> <span id="total-comments">25</span>
+                        <span class="arrow">→</span>
+                        <strong>Weighted Score:</strong> <span id="weighted-comments">115</span> points
+                    </div>
+                </div>
+
+                <div class="slider-group" style="margin-top: 25px;">
+                    <div class="slider-label">
+                        <span>🔄 Shares</span>
+                        <span class="value" id="shares-value">10</span>
+                    </div>
+                    <input type="range" id="shares-slider" min="0" max="100" value="10" step="1">
+                </div>
+            </div>
+
+            <!-- NFT Bonus Toggle -->
+            <div class="section">
+                <h2 class="section-title">🎨 Creator Pass NFT</h2>
+                <div class="toggle-group">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="nft-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-weight: 600;">I have Creator Pass NFT (+50% bonus)</span>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results">
+                <div class="earnings-display">
+                    <div class="label">You Earn Per Post:</div>
+                    <div class="amount" id="earnings-amount">$42.50</div>
+                    <div style="font-size: 1.2em; opacity: 0.9;" id="token-amount">(57 $HVNA tokens)</div>
+                </div>
+
+                <!-- Multipliers Breakdown -->
+                <div class="multipliers-breakdown">
+                    <div class="breakdown-title">📈 Quality Score Breakdown</div>
+                    <div class="multiplier-item">
+                        <span>Quality Score:</span>
+                        <span class="multiplier-value" id="quality-score">315 points</span>
+                    </div>
+                    <div class="multiplier-item">
+                        <span>Base Earnings:</span>
+                        <span class="multiplier-value" id="base-earnings">$31.50</span>
+                    </div>
+                    <div class="multiplier-item">
+                        <span>Content Type Multiplier:</span>
+                        <span class="multiplier-value" id="content-multiplier">1.3x</span>
+                    </div>
+                    <div class="multiplier-item">
+                        <span>Completion Rate Multiplier:</span>
+                        <span class="multiplier-value" id="completion-multiplier">1.0x</span>
+                    </div>
+                    <div class="multiplier-item">
+                        <span>Tier Multiplier:</span>
+                        <span class="multiplier-value" id="tier-multiplier">1.00x</span>
+                    </div>
+                    <div class="multiplier-item">
+                        <span>NFT Multiplier:</span>
+                        <span class="multiplier-value" id="nft-multiplier">1.0x</span>
+                    </div>
+                </div>
+
+                <!-- Monthly Projection -->
+                <div class="monthly-projection">
+                    <div style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.9;">
+                        📅 Monthly Earnings Projection
+                    </div>
+                    <p style="margin-bottom: 10px; opacity: 0.9;">
+                        If you post consistently:
+                    </p>
+                    <div class="monthly-posts">
+                        <div class="post-option" data-posts="10">10 posts/mo</div>
+                        <div class="post-option active" data-posts="20">20 posts/mo</div>
+                        <div class="post-option" data-posts="30">30 posts/mo</div>
+                        <div class="post-option" data-posts="50">50 posts/mo</div>
+                    </div>
+                    <div style="font-size: 2em; font-weight: bold; margin-top: 15px;">
+                        <span id="monthly-earnings">$850.00/month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-section">
+                <p style="font-size: 1.2em; margin-bottom: 20px; color: #666;">
+                    Ready to start earning fairly?
+                </p>
+                <a href="https://contentlynk.com/beta#apply" class="cta-button">Apply for Beta Access →</a>
+                <p class="cta-note">
+                    ✓ Rewards quality over quantity &nbsp; ✓ Fair creator compensation &nbsp; ✓ 100% transparent
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Content type multipliers
+        const CONTENT_TYPE_MULTIPLIERS = {
+            TEXT_SHORT: 1.0,
+            TEXT_MEDIUM: 1.2,
+            TEXT_LONG: 1.3,
+            ARTICLE_SHORT: 1.2,
+            ARTICLE_MEDIUM: 1.3,
+            ARTICLE_LONG: 1.5,
+            VIDEO_SHORT: 1.1,
+            VIDEO_MEDIUM: 1.3,
+            VIDEO_LONG: 1.5,
+            SHORT_VIDEO: 1.0
+        };
+
+        // Completion rate multipliers
+        const COMPLETION_MULTIPLIERS = {
+            LOW: 0.85,
+            MEDIUM: 1.0,
+            HIGH: 1.15,
+            VERY_HIGH: 1.3
+        };
+
+        // Tier data
+        const TIERS = {
+            STANDARD: { share: 0.55 },
+            SILVER: { share: 0.60 },
+            GOLD: { share: 0.65 },
+            PLATINUM: { share: 0.70 },
+            GENESIS: { share: 0.75 }
+        };
+
+        // Calculator state
+        let state = {
+            tier: 'STANDARD',
+            contentType: 'ARTICLE_MEDIUM',
+            completionRate: 'MEDIUM',
+            likes: 100,
+            shortComments: 5,
+            mediumComments: 15,
+            longComments: 5,
+            shares: 10,
+            hasNFT: false,
+            postsPerMonth: 20,
+            tokenPrice: 0.75
+        };
+
+        // Get elements
+        const likesSlider = document.getElementById('likes-slider');
+        const shortCommentsSlider = document.getElementById('short-comments-slider');
+        const mediumCommentsSlider = document.getElementById('medium-comments-slider');
+        const longCommentsSlider = document.getElementById('long-comments-slider');
+        const sharesSlider = document.getElementById('shares-slider');
+        const contentTypeSelect = document.getElementById('content-type');
+        const completionRateSelect = document.getElementById('completion-rate');
+        const nftToggle = document.getElementById('nft-toggle');
+
+        const likesValue = document.getElementById('likes-value');
+        const shortCommentsValue = document.getElementById('short-comments-value');
+        const mediumCommentsValue = document.getElementById('medium-comments-value');
+        const longCommentsValue = document.getElementById('long-comments-value');
+        const sharesValue = document.getElementById('shares-value');
+        const totalCommentsSpan = document.getElementById('total-comments');
+        const weightedCommentsSpan = document.getElementById('weighted-comments');
+
+        const earningsAmount = document.getElementById('earnings-amount');
+        const tokenAmount = document.getElementById('token-amount');
+        const qualityScoreSpan = document.getElementById('quality-score');
+        const baseEarningsSpan = document.getElementById('base-earnings');
+        const contentMultiplierSpan = document.getElementById('content-multiplier');
+        const completionMultiplierSpan = document.getElementById('completion-multiplier');
+        const tierMultiplierSpan = document.getElementById('tier-multiplier');
+        const nftMultiplierSpan = document.getElementById('nft-multiplier');
+        const monthlyEarnings = document.getElementById('monthly-earnings');
+
+        // Calculate earnings
+        function calculate() {
+            // Weighted comment score
+            const weightedComments = (state.shortComments * 2) + (state.mediumComments * 5) + (state.longComments * 8);
+
+            // Quality score
+            const qualityScore = state.likes * 1 + weightedComments + state.shares * 20;
+
+            // Base earnings
+            const baseEarnings = qualityScore * 0.10;
+
+            // Apply multipliers
+            const contentMultiplier = CONTENT_TYPE_MULTIPLIERS[state.contentType];
+            const completionMultiplier = COMPLETION_MULTIPLIERS[state.completionRate];
+            const nftMultiplier = state.hasNFT ? 1.5 : 1;
+            const tierMultiplier = TIERS[state.tier].share / TIERS.STANDARD.share;
+
+            // Calculate totals
+            const totalUSD = baseEarnings * contentMultiplier * completionMultiplier * nftMultiplier * tierMultiplier;
+            const tokens = totalUSD / state.tokenPrice;
+            const monthly = totalUSD * state.postsPerMonth;
+
+            // Update display
+            const totalComments = state.shortComments + state.mediumComments + state.longComments;
+            totalCommentsSpan.textContent = totalComments;
+            weightedCommentsSpan.textContent = weightedComments;
+
+            earningsAmount.textContent = `$${totalUSD.toFixed(2)}`;
+            tokenAmount.textContent = `(${Math.round(tokens)} $HVNA tokens)`;
+            qualityScoreSpan.textContent = `${qualityScore} points`;
+            baseEarningsSpan.textContent = `$${baseEarnings.toFixed(2)}`;
+            contentMultiplierSpan.textContent = `${contentMultiplier}x`;
+            completionMultiplierSpan.textContent = `${completionMultiplier}x`;
+            tierMultiplierSpan.textContent = `${tierMultiplier.toFixed(2)}x`;
+            nftMultiplierSpan.textContent = `${nftMultiplier}x`;
+            monthlyEarnings.textContent = `$${monthly.toFixed(2)}/month`;
+        }
+
+        // Event listeners
+        likesSlider.addEventListener('input', (e) => {
+            state.likes = parseInt(e.target.value);
+            likesValue.textContent = state.likes;
+            calculate();
+        });
+
+        shortCommentsSlider.addEventListener('input', (e) => {
+            state.shortComments = parseInt(e.target.value);
+            shortCommentsValue.textContent = state.shortComments;
+            calculate();
+        });
+
+        mediumCommentsSlider.addEventListener('input', (e) => {
+            state.mediumComments = parseInt(e.target.value);
+            mediumCommentsValue.textContent = state.mediumComments;
+            calculate();
+        });
+
+        longCommentsSlider.addEventListener('input', (e) => {
+            state.longComments = parseInt(e.target.value);
+            longCommentsValue.textContent = state.longComments;
+            calculate();
+        });
+
+        sharesSlider.addEventListener('input', (e) => {
+            state.shares = parseInt(e.target.value);
+            sharesValue.textContent = state.shares;
+            calculate();
+        });
+
+        contentTypeSelect.addEventListener('change', (e) => {
+            state.contentType = e.target.value;
+            calculate();
+        });
+
+        completionRateSelect.addEventListener('change', (e) => {
+            state.completionRate = e.target.value;
+            calculate();
+        });
+
+        nftToggle.addEventListener('change', (e) => {
+            state.hasNFT = e.target.checked;
+            calculate();
+        });
+
+        // Tier selection
+        document.querySelectorAll('.tier-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                document.querySelectorAll('.tier-option').forEach(opt => opt.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                state.tier = e.currentTarget.dataset.tier;
+                calculate();
+            });
+        });
+
+        // Monthly posts selection
+        document.querySelectorAll('.post-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                document.querySelectorAll('.post-option').forEach(opt => opt.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                state.postsPerMonth = parseInt(e.currentTarget.dataset.posts);
+                calculate();
+            });
+        });
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
