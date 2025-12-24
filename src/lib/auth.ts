@@ -47,20 +47,20 @@ export const authOptions: NextAuthOptions = {
             })
 
             const validatedData = registerSchema.parse({
-              email: credentials.email,
-              username: credentials.username,
+              email: credentials.email.trim().toLowerCase(),
+              username: credentials.username.trim(),
               password: credentials.password,
-              displayName: credentials.displayName,
+              displayName: credentials.displayName?.trim(),
             })
 
             console.log('Validation passed:', validatedData)
 
-            // Check if user already exists
+            // Check if user already exists (case-insensitive)
             const existingUser = await prisma.user.findFirst({
               where: {
                 OR: [
-                  { email: validatedData.email },
-                  { username: validatedData.username },
+                  { email: { equals: validatedData.email, mode: 'insensitive' } },
+                  { username: { equals: validatedData.username, mode: 'insensitive' } },
                 ],
               },
             })
@@ -101,12 +101,12 @@ export const authOptions: NextAuthOptions = {
             console.log('Login attempt for:', credentials.email)
 
             const validatedData = loginSchema.parse({
-              email: credentials.email,
+              email: credentials.email.trim().toLowerCase(),
               password: credentials.password,
             })
 
-            const user = await prisma.user.findUnique({
-              where: { email: validatedData.email },
+            const user = await prisma.user.findFirst({
+              where: { email: { equals: validatedData.email, mode: 'insensitive' } },
             })
 
             console.log('User found:', !!user)
