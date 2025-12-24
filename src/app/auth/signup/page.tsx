@@ -55,10 +55,13 @@ export default function SignUp() {
       if (result?.error) {
         // More specific error handling
         console.log('Signup error:', result.error)
-        if (result.error.includes('username')) {
+        if (result.error.toLowerCase().includes('username') || result.error.includes('letters')) {
           setError('Username must contain only letters, numbers, underscores, and hyphens (no spaces)')
-        } else {
+        } else if (result.error.includes('already exists')) {
           setError('User already exists with this email or username')
+        } else {
+          // Show the actual error message from the backend
+          setError(result.error)
         }
       } else {
         // Registration successful, redirect to dashboard
@@ -98,6 +101,7 @@ export default function SignUp() {
                 name="email"
                 type="email"
                 required
+                autoComplete="off"
                 value={formData.email}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -113,10 +117,11 @@ export default function SignUp() {
                 name="username"
                 type="text"
                 required
+                autoComplete="off"
                 value={formData.username}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="nft_champion or nftchampion"
+                placeholder="Choose your username"
               />
               <p className="mt-1 text-xs text-gray-500">Letters, numbers, underscores, and hyphens only (no spaces)</p>
             </div>
@@ -128,6 +133,7 @@ export default function SignUp() {
                 id="displayName"
                 name="displayName"
                 type="text"
+                autoComplete="off"
                 value={formData.displayName}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -143,6 +149,7 @@ export default function SignUp() {
                 name="password"
                 type="password"
                 required
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -158,6 +165,7 @@ export default function SignUp() {
                 name="confirmPassword"
                 type="password"
                 required
+                autoComplete="new-password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { Clock, Calendar, Tag, ArrowLeft, Eye } from 'lucide-react'
-import { VideoPlayer } from '@/components/content/VideoPlayer'
+import { VideoPlayerWithTracking } from '@/components/tracking/VideoPlayerWithTracking'
 
 interface VideoPageProps {
   params: {
@@ -138,7 +138,9 @@ export default async function VideoPage({ params }: VideoPageProps) {
           <div className="lg:col-span-2">
             {/* Video Player */}
             <div className="bg-black rounded-xl overflow-hidden shadow-2xl aspect-video">
-              <VideoPlayer
+              <VideoPlayerWithTracking
+                postId={post.id}
+                videoDuration={post.videoDuration || 0}
                 url={post.videoUrl}
                 thumbnail={post.videoThumbnail || undefined}
                 title={post.title || undefined}

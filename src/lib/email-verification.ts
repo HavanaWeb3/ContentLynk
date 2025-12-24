@@ -6,6 +6,8 @@
 
 import { prisma } from '@/lib/db';
 import crypto from 'crypto';
+import { sendEmail } from '@/lib/email';
+import { renderEmailVerificationTemplate, renderEmailVerificationTextTemplate } from '@/emails/email-verification';
 
 const VERIFICATION_TOKEN_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -65,23 +67,30 @@ export async function sendEmailVerification(userId: string, email: string): Prom
     // Create verification link
     const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
 
-    // Send email (for now, we'll log it - integrate with email service later)
-    console.log(`[Email Verification] Sending to ${email}:`);
-    console.log(`Verification URL: ${verificationUrl}`);
-    console.log(`Token expires in 24 hours`);
+    // Send email using Resend
+    const htmlTemplate = renderEmailVerificationTemplate({
+      verificationUrl,
+      username: user.email?.split('@')[0] || 'there',
+    });
 
-    // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
-    // Example:
-    // await sendEmail({
-    //   to: email,
-    //   subject: 'Verify your ContentLynk email',
-    //   html: `
-    //     <h1>Verify Your Email</h1>
-    //     <p>Click the link below to verify your email address:</p>
-    //     <a href="${verificationUrl}">Verify Email</a>
-    //     <p>This link expires in 24 hours.</p>
-    //   `
-    // });
+    const textTemplate = renderEmailVerificationTextTemplate({
+      verificationUrl,
+      username: user.email?.split('@')[0] || 'there',
+    });
+
+    const emailResult = await sendEmail({
+      to: email,
+      subject: 'Verify Your Email - ContentLynk',
+      html: htmlTemplate,
+      text: textTemplate,
+    });
+
+    if (!emailResult.success) {
+      console.error('[Email Verification] Failed to send email:', emailResult.error);
+      // Still return success since token was created - user can request resend
+    }
+
+    console.log(`[Email Verification] Email sent to ${email}, token expires in 24 hours`);
 
     return {
       success: true,

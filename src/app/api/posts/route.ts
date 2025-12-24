@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
       metaDescription: metaDescription || null,
       authorId: session.user.id,
       publishedAt: status === 'PUBLISHED' ? new Date() : null,
+      contentLength: content?.trim().length || 0, // Track content length for Quality Score multiplier
     }
 
     // Add video-specific fields

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { Clock, Calendar, Tag, ArrowLeft } from 'lucide-react'
+import { ArticleWithTracking } from '@/components/tracking/ArticleWithTracking'
 
 interface ArticlePageProps {
   params: {
@@ -213,11 +214,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             {/* Article Body */}
             <div className="prose prose-lg max-w-none">
-              {/* Render article content as HTML */}
-              <div
-                className="leading-relaxed text-gray-800"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+              {/* Render article content as HTML with scroll depth tracking */}
+              <ArticleWithTracking postId={post.id} content={post.content} />
             </div>
           </div>
         </article>

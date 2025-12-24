@@ -85,6 +85,10 @@ export const authOptions: NextAuthOptions = {
               },
             })
 
+            // Send email verification
+            const { sendEmailVerification } = await import('@/lib/email-verification');
+            await sendEmailVerification(user.id, user.email!);
+
             return {
               id: user.id,
               email: user.email!,

@@ -1,12 +1,15 @@
 /**
- * Earnings Processor with BETA/NATURAL Mode Support
+ * Earnings Processor with BETA/NATURAL Mode Support and Enhanced Quality Score
  *
  * Implements the earning formula with mode-aware protection:
- * - Quality Score = (likes × 1) + (comments × 5) + (shares × 20)
+ * - Quality Score = (likes × 1) + (weighted comments) + (shares × 20)
+ * - Comment Weights: short (<50 chars) = 2x, medium (50-200) = 5x, long (200+) = 8x
  * - Base Earnings = Quality Score × $0.10
+ * - Content Type Multiplier = 1.0x - 1.5x based on length/duration
+ * - Completion Rate Multiplier = 0.85x - 1.3x based on avg completion %
  * - Tier Multiplier = tier revenue share / 0.55
  * - NFT Multiplier = 1.5 if has NFT, else 1.0
- * - Raw Earnings = Base × Tier × NFT
+ * - Raw Earnings = Base × Content × Completion × Tier × NFT
  */
 
 import { prisma } from '@/lib/db';
@@ -41,17 +44,115 @@ export interface EngagementMetrics {
 }
 
 /**
+ * Content type multiplier based on length/duration
+ *
+ * TEXT: 1.0x (<1000 chars), 1.2x (1000-5000), 1.3x (5000+)
+ * ARTICLE: 1.2x (<5 min read), 1.3x (5-10 min), 1.5x (10+ min)
+ * VIDEO: 1.1x (<5 min), 1.3x (5-15 min), 1.5x (15+ min)
+ * SHORT_VIDEO: 1.0x (always)
+ */
+export function getContentTypeMultiplier(
+  contentType: string,
+  videoDuration: number | null,
+  readingTime: number | null,
+  contentLength: number | null
+): number {
+  if (contentType === 'TEXT') {
+    const length = contentLength || 0;
+    if (length < 1000) return 1.0;
+    if (length < 5000) return 1.2;
+    return 1.3;
+  }
+
+  if (contentType === 'ARTICLE') {
+    const minutes = readingTime || 0;
+    if (minutes < 5) return 1.2;
+    if (minutes < 10) return 1.3;
+    return 1.5;
+  }
+
+  if (contentType === 'VIDEO') {
+    const seconds = videoDuration || 0;
+    if (seconds < 300) return 1.1; // <5 min
+    if (seconds < 900) return 1.3; // <15 min
+    return 1.5; // 15+ min
+  }
+
+  if (contentType === 'SHORT_VIDEO') return 1.0;
+
+  return 1.0; // Default
+}
+
+/**
+ * Completion rate multiplier based on average consumption
+ *
+ * <50%: 0.85x
+ * 50-69%: 1.0x
+ * 70-84%: 1.15x
+ * 85%+: 1.3x
+ */
+export function getCompletionMultiplier(
+  averageScrollDepth: number | null,
+  averageWatchPercentage: number | null,
+  contentType: string
+): number {
+  // Determine which metric to use based on content type
+  let completionRate = 0;
+
+  if (contentType === 'VIDEO' || contentType === 'SHORT_VIDEO') {
+    completionRate = averageWatchPercentage || 0;
+  } else if (contentType === 'ARTICLE' || contentType === 'TEXT') {
+    completionRate = averageScrollDepth || 0;
+  }
+
+  // If no consumption data yet, use neutral multiplier
+  if (completionRate === 0) return 1.0;
+
+  if (completionRate < 0.50) return 0.85;
+  if (completionRate < 0.70) return 1.0;
+  if (completionRate < 0.85) return 1.15;
+  return 1.3;
+}
+
+/**
+ * Calculate weighted comment score
+ *
+ * Short comments (<50 chars): 2x
+ * Medium comments (50-200 chars): 5x
+ * Long comments (200+ chars): 8x
+ */
+export async function getWeightedCommentScore(postId: string): Promise<number> {
+  const comments = await prisma.comment.findMany({
+    where: { postId },
+    select: {
+      characterCount: true,
+      content: true,
+    },
+  });
+
+  return comments.reduce((total, comment) => {
+    const length = comment.characterCount || comment.content.length;
+
+    if (length < 50) return total + 2;
+    if (length < 200) return total + 5;
+    return total + 8;
+  }, 0);
+}
+
+/**
  * Raw earnings calculation result
  */
 export interface RawEarningsResult {
   qualityScore: number;
   baseEarnings: number;
+  contentTypeMultiplier: number;
+  completionMultiplier: number;
   tierMultiplier: number;
   nftMultiplier: number;
   rawEarnings: number;
   breakdown: {
     likes: number;
-    comments: number;
+    weightedComments: number;
     shares: number;
   };
 }
@@ -77,12 +178,14 @@ export interface ProcessedEarningsResult {
 }
 
 /**
- * Calculate quality score from engagement metrics
+ * Calculate quality score from engagement metrics with weighted comments
  *
- * Formula: (likes × 1) + (comments × 5) + (shares × 20)
+ * Formula: (likes × 1) + (weighted comments) + (shares × 20)
+ * Note: This is a simplified version for when we don't have access to individual comment data
+ * Use getWeightedCommentScore() for the full calculation
  */
-function calculateQualityScore(metrics: EngagementMetrics): number {
-  return (metrics.likes * 1) + (metrics.comments * 5) + (metrics.shares * 20);
+function calculateQualityScore(metrics: EngagementMetrics, weightedCommentScore: number): number {
+  return (metrics.likes * 1) + weightedCommentScore + (metrics.shares * 20);
 }
 
 /**
@@ -96,7 +199,7 @@ function getTierMultiplier(tier: string): number {
 }
 
 /**
- * Calculate raw earnings before any caps
+ * Calculate raw earnings before any caps with enhanced Quality Score
  *
  * @param postId - Post ID to calculate earnings for
  * @param creatorId - Creator user ID
@@ -106,13 +209,19 @@ export async function calculateRawEarnings(
   postId: string,
   creatorId: string
 ): Promise<RawEarningsResult> {
-  // Get post engagement
+  // Get post engagement and content data
   const post = await prisma.post.findUnique({
     where: { id: postId },
     select: {
       likes: true,
       comments: true,
       shares: true,
+      contentType: true,
+      videoDuration: true,
+      readingTime: true,
+      contentLength: true,
+      averageScrollDepth: true,
+      averageWatchPercentage: true,
     },
   });
 
@@ -133,15 +242,33 @@ export async function calculateRawEarnings(
     throw new Error(`Creator ${creatorId} not found`);
   }
 
-  // Calculate quality score
+  // Calculate weighted comment score
+  const weightedCommentScore = await getWeightedCommentScore(postId);
+
+  // Calculate quality score with weighted comments
   const qualityScore = calculateQualityScore({
     likes: post.likes,
     comments: post.comments,
     shares: post.shares,
-  });
+  }, weightedCommentScore);
 
   // Calculate base earnings
   const baseEarnings = qualityScore * BASE_RATE_PER_QUALITY_POINT;
+
+  // Get content type multiplier
+  const contentTypeMultiplier = getContentTypeMultiplier(
+    post.contentType,
+    post.videoDuration,
+    post.readingTime,
+    post.contentLength
+  );
+
+  // Get completion rate multiplier
+  const completionMultiplier = getCompletionMultiplier(
+    post.averageScrollDepth,
+    post.averageWatchPercentage,
+    post.contentType
+  );
 
   // Get tier multiplier
   const tierMultiplier = getTierMultiplier(creator.membershipTier);
@@ -149,19 +276,22 @@ export async function calculateRawEarnings(
   // Get NFT multiplier
   const nftMultiplier = creator.isVerified ? NFT_MULTIPLIER : NO_NFT_MULTIPLIER;
 
-  // Calculate raw earnings
-  const rawEarnings = baseEarnings * tierMultiplier * nftMultiplier;
+  // Calculate raw earnings with all multipliers
+  const rawEarnings = baseEarnings * contentTypeMultiplier * completionMultiplier * tierMultiplier * nftMultiplier;
 
-  // Breakdown by engagement type
+  // Breakdown by engagement type (with all multipliers applied)
+  const allMultipliers = contentTypeMultiplier * completionMultiplier * tierMultiplier * nftMultiplier;
   const breakdown = {
-    likes: post.likes * 1 * BASE_RATE_PER_QUALITY_POINT * tierMultiplier * nftMultiplier,
-    comments: post.comments * 5 * BASE_RATE_PER_QUALITY_POINT * tierMultiplier * nftMultiplier,
-    shares: post.shares * 20 * BASE_RATE_PER_QUALITY_POINT * tierMultiplier * nftMultiplier,
+    likes: post.likes * 1 * BASE_RATE_PER_QUALITY_POINT * allMultipliers,
+    weightedComments: weightedCommentScore * BASE_RATE_PER_QUALITY_POINT * allMultipliers,
+    shares: post.shares * 20 * BASE_RATE_PER_QUALITY_POINT * allMultipliers,
   };
 
   return {
     qualityScore,
     baseEarnings,
+    contentTypeMultiplier,
+    completionMultiplier,
     tierMultiplier,
     nftMultiplier,
     rawEarnings,
