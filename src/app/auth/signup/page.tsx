@@ -101,7 +101,9 @@ export default function SignUp() {
                 name="email"
                 type="email"
                 required
-                autoComplete="off"
+                autoComplete="new-email"
+                data-form-type="other"
+                data-lpignore="true"
                 value={formData.email}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -117,7 +119,12 @@ export default function SignUp() {
                 name="username"
                 type="text"
                 required
-                autoComplete="off"
+                autoComplete="new-username"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                data-form-type="other"
+                data-lpignore="true"
                 value={formData.username}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
