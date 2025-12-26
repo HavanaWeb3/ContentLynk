@@ -23,6 +23,39 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
   const [isVerifying, setIsVerifying] = useState(false)
   const [nftHoldings, setNftHoldings] = useState<NFTHoldings | null>(null)
   const [verificationError, setVerificationError] = useState<string | null>(null)
+  const [userWalletAddress, setUserWalletAddress] = useState<string | null>(null)
+
+  // Fetch user's stored wallet address on mount and session change
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          setUserWalletAddress(data.user?.walletAddress || null)
+        })
+        .catch(err => console.error('Error fetching user wallet:', err))
+    } else {
+      // User logged out, clear wallet state and disconnect
+      setUserWalletAddress(null)
+      if (isConnected) {
+        disconnect()
+        setNftHoldings(null)
+      }
+    }
+  }, [session?.user?.id, isConnected, disconnect])
+
+  // Check if connected wallet matches user's stored wallet, disconnect if not
+  useEffect(() => {
+    if (isConnected && address && userWalletAddress) {
+      // If connected wallet doesn't match user's stored wallet, disconnect
+      if (address.toLowerCase() !== userWalletAddress.toLowerCase()) {
+        console.log('Connected wallet does not match user account, disconnecting...')
+        disconnect()
+        setNftHoldings(null)
+        toast.error('Wallet disconnected: This wallet belongs to a different account')
+      }
+    }
+  }, [isConnected, address, userWalletAddress, disconnect])
 
   // Verify NFT holdings when wallet connects
   useEffect(() => {
