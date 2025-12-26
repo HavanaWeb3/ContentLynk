@@ -25,31 +25,55 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
   const [verificationError, setVerificationError] = useState<string | null>(null)
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(null)
 
-  // Fetch user's stored wallet address on mount and session change
+  // Fetch user's stored wallet address and validate on mount and session change
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch('/api/user/profile')
-        .then(res => res.json())
-        .then(data => {
-          setUserWalletAddress(data.user?.walletAddress || null)
-        })
-        .catch(err => console.error('Error fetching user wallet:', err))
-    } else {
-      // User logged out, clear wallet state and disconnect
-      setUserWalletAddress(null)
-      if (isConnected) {
-        disconnect()
-        setNftHoldings(null)
+    const validateWallet = async () => {
+      if (session?.user?.id) {
+        try {
+          const res = await fetch('/api/user/profile')
+          const data = await res.json()
+          const storedWallet = data.user?.walletAddress || null
+
+          setUserWalletAddress(storedWallet)
+
+          // Immediately disconnect if wallet doesn't match
+          if (isConnected && address && storedWallet) {
+            if (address.toLowerCase() !== storedWallet.toLowerCase()) {
+              console.log('⚠️ Wallet mismatch detected on mount - disconnecting')
+              disconnect()
+              setNftHoldings(null)
+              toast.error('Wallet disconnected: This wallet belongs to a different account')
+            }
+          } else if (isConnected && address && !storedWallet) {
+            // User has no stored wallet but wagmi shows connected - this is from another user
+            console.log('⚠️ Connected wallet found but user has no stored wallet - disconnecting')
+            disconnect()
+            setNftHoldings(null)
+            toast.error('Wallet disconnected: No wallet associated with this account')
+          }
+        } catch (err) {
+          console.error('Error fetching user wallet:', err)
+        }
+      } else {
+        // User logged out, clear wallet state and disconnect
+        setUserWalletAddress(null)
+        if (isConnected) {
+          console.log('⚠️ No session but wallet connected - disconnecting')
+          disconnect()
+          setNftHoldings(null)
+        }
       }
     }
-  }, [session?.user?.id, isConnected, disconnect])
 
-  // Check if connected wallet matches user's stored wallet, disconnect if not
+    validateWallet()
+  }, [session?.user?.id, isConnected, address, disconnect])
+
+  // Additional check when connection state changes
   useEffect(() => {
     if (isConnected && address && userWalletAddress) {
       // If connected wallet doesn't match user's stored wallet, disconnect
       if (address.toLowerCase() !== userWalletAddress.toLowerCase()) {
-        console.log('Connected wallet does not match user account, disconnecting...')
+        console.log('⚠️ Wallet mismatch detected - disconnecting')
         disconnect()
         setNftHoldings(null)
         toast.error('Wallet disconnected: This wallet belongs to a different account')
