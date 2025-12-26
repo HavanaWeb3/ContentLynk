@@ -24,20 +24,22 @@ export default function OverviewTab() {
   const fetchOverviewStats = async () => {
     try {
       // Fetch stats from multiple endpoints
-      const [flaggedRes, betaRes, earningsRes] = await Promise.all([
+      const [flaggedRes, betaRes, earningsRes, usersRes] = await Promise.all([
         fetch('/api/admin/flagged'),
         fetch('/api/beta-applications'),
-        fetch('/api/admin/earnings-stats')
+        fetch('/api/admin/earnings-stats'),
+        fetch('/api/admin/users')
       ]);
 
       const flaggedData = await flaggedRes.json();
       const betaData = await betaRes.json();
       const earningsData = await earningsRes.json();
+      const usersData = await usersRes.json();
 
       setStats({
         flaggedPosts: flaggedData.flaggedPosts?.length || 0,
         betaApplications: betaData.applications?.filter((a: any) => a.status === 'PENDING').length || 0,
-        totalUsers: 0, // TODO: Add users endpoint
+        totalUsers: usersData.stats?.total || 0,
         recentActivity: [],
         earnings: {
           total: earningsData.total || 0,

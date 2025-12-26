@@ -3,13 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-// import { useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-// import { WalletConnection } from '@/components/web3/WalletConnection'
-// import { EarningsDisplay } from '@/components/earnings/EarningsDisplay'
-// import { NFTHoldings } from '@/lib/nftVerification'
+import { WalletConnection } from '@/components/web3/WalletConnection'
+import { NFTHoldings } from '@/lib/nftVerification'
 import { formatEarnings, calculateEarningsWithTier } from '@/lib/earnings'
 import { MembershipTier } from '@/types/membership'
 
@@ -32,14 +31,13 @@ interface Post {
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
-  // const { isConnected } = useAccount()
-  const isConnected = false // Temporary for basic functionality
+  const { isConnected } = useAccount()
   const router = useRouter()
   const [membershipTier, setMembershipTier] = useState<MembershipTier>(MembershipTier.STANDARD)
   const [posts, setPosts] = useState<Post[]>([])
   const [postsLoading, setPostsLoading] = useState(true)
   const [deletingPostId, setDeletingPostId] = useState<string | null>(null)
-  // const [nftHoldings, setNftHoldings] = useState<NFTHoldings | null>(null)
+  const [nftHoldings, setNftHoldings] = useState<NFTHoldings | null>(null)
   const [emailVerified, setEmailVerified] = useState(false)
   const [resendingEmail, setResendingEmail] = useState(false)
   const [resendMessage, setResendMessage] = useState('')
@@ -145,10 +143,10 @@ export default function Dashboard() {
     router.push(`/edit/${postId}`)
   }
 
-  // const handleMembershipUpdate = (holdings: NFTHoldings) => {
-  //   setMembershipTier(holdings.membershipTier)
-  //   setNftHoldings(holdings)
-  // }
+  const handleMembershipUpdate = (holdings: NFTHoldings) => {
+    setMembershipTier(holdings.membershipTier)
+    setNftHoldings(holdings)
+  }
 
   // Calculate stats based on actual posts
   const stats = {
@@ -215,10 +213,10 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              {/* <WalletConnection
+              <WalletConnection
                 onMembershipUpdate={handleMembershipUpdate}
                 showFullCard={false}
-              /> */}
+              />
               {session.user?.isAdmin && (
                 <Button
                   onClick={() => router.push('/admin/beta-applications')}
@@ -285,26 +283,11 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Web3 Connection Prompt */}
+        {/* Web3 Connection Prompt - Only show if not connected */}
         {!isConnected && (
           <Card className="border-indigo-200 bg-indigo-50">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-indigo-900">
-                    🚀 Unlock Higher Earnings with Web3
-                  </h3>
-                  <p className="text-indigo-700 mt-1">
-                    Connect your wallet to verify NFT holdings and unlock revenue shares up to 75%
-                  </p>
-                </div>
-                <Button
-                  onClick={() => {/* Wallet connection handled by WalletConnection component */}}
-                  className="bg-indigo-600 hover:bg-indigo-700"
-                >
-                  Connect Wallet
-                </Button>
-              </div>
+              <WalletConnection onMembershipUpdate={handleMembershipUpdate} />
             </CardContent>
           </Card>
         )}
