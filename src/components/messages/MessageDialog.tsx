@@ -122,17 +122,21 @@ export function MessageDialog({
 
         {/* Message Input */}
         <div className="space-y-4">
-          <Textarea
-            ref={textareaRef}
-            placeholder="Type your message here..."
+          <textarea
+            onChange={(e) => {
+              console.log('Input received:', e.target.value);
+              setMessage(e.target.value);
+            }}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={5}
-            disabled={isSending || success}
-            className="resize-none"
-            maxLength={1000}
-            autoFocus
-            tabIndex={0}
+            placeholder="TEST - Can you type here?"
+            style={{
+              width: '100%',
+              minHeight: '120px',
+              padding: '12px',
+              border: '2px solid red',
+              zIndex: 9999,
+              position: 'relative'
+            }}
           />
           <div className="flex justify-between text-sm text-gray-500">
             <span>{message.length}/1000 characters</span>
