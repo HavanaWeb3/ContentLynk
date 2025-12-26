@@ -10,52 +10,52 @@ datasource db {
 
 // User Model - Core user information and wallet connection
 model User {
-  id              String         @id @default(cuid())
-  email           String?        @unique
-  password        String?        // Hashed password for credential auth
-  walletAddress   String?        @unique
-  username        String         @unique
-  displayName     String?
-  bio             String?
-  avatar          String?
-  membershipTier  String         @default("STANDARD")
-  totalEarnings   Decimal        @default(0)
-  isVerified      Boolean        @default(false)  // NFT verification
-  isAdmin         Boolean        @default(false)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id             String   @id @default(cuid())
+  email          String?  @unique
+  password       String? // Hashed password for credential auth
+  walletAddress  String?  @unique
+  username       String   @unique
+  displayName    String?
+  bio            String?
+  avatar         String?
+  membershipTier String   @default("STANDARD")
+  totalEarnings  Decimal  @default(0)
+  isVerified     Boolean  @default(false) // NFT verification
+  isAdmin        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Legal name for payments/tax (private, never public)
-  legalName       String?        @map("legal_name")
+  legalName String? @map("legal_name")
 
   // Verification fields
-  emailVerified   Boolean        @default(false) @map("email_verified")
-  phoneNumber     String?        @unique @map("phone_number")
-  phoneVerified   Boolean        @default(false) @map("phone_verified")
-  signupIp        String?        @map("signup_ip")
+  emailVerified Boolean @default(false) @map("email_verified")
+  phoneNumber   String? @unique @map("phone_number")
+  phoneVerified Boolean @default(false) @map("phone_verified")
+  signupIp      String? @map("signup_ip")
 
   // Welcome email tracking
-  welcomeEmailSent    Boolean    @default(false) @map("welcome_email_sent")
-  welcomeEmailSentAt  DateTime?  @map("welcome_email_sent_at")
-  betaTesterNumber    Int?       @map("beta_tester_number") // Sequential number (#1 of 1,000)
+  welcomeEmailSent   Boolean   @default(false) @map("welcome_email_sent")
+  welcomeEmailSentAt DateTime? @map("welcome_email_sent_at")
+  betaTesterNumber   Int?      @map("beta_tester_number") // Sequential number (#1 of 1,000)
 
   // Mode system fields
-  trustScore      Int?           @default(100) @map("trust_score")
-  status          String?        @default("ACTIVE")
-  probationUntil  DateTime?      @map("probation_until")
-  suspendedAt     DateTime?      @map("suspended_at")
+  trustScore     Int?      @default(100) @map("trust_score")
+  status         String?   @default("ACTIVE")
+  probationUntil DateTime? @map("probation_until")
+  suspendedAt    DateTime? @map("suspended_at")
 
   // Relations
-  posts           Post[]
-  earnings        Earning[]
-  followers       Follow[]       @relation("UserFollowers")
-  following       Follow[]       @relation("UserFollowing")
-  likes           Like[]
-  comments        Comment[]
+  posts     Post[]
+  earnings  Earning[]
+  followers Follow[]  @relation("UserFollowers")
+  following Follow[]  @relation("UserFollowing")
+  likes     Like[]
+  comments  Comment[]
 
   // NextAuth.js fields
-  accounts        Account[]
-  sessions        Session[]
+  accounts Account[]
+  sessions Session[]
 
   @@map("users")
 }
@@ -69,68 +69,68 @@ model User {
 
 // Content Posts - Enhanced for long-form content
 model Post {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Basic fields
-  title       String?
-  content     String   @db.Text // For short posts and article content
-  slug        String?  @unique // SEO-friendly URL slug
-  excerpt     String?  @db.Text // Short description/preview
+  title   String?
+  content String  @db.Text // For short posts and article content
+  slug    String? @unique // SEO-friendly URL slug
+  excerpt String? @db.Text // Short description/preview
 
   // Content type and status
-  contentType String   @default("TEXT") @map("content_type") // TEXT, ARTICLE, VIDEO, SHORT_VIDEO
-  status      String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  contentType String @default("TEXT") @map("content_type") // TEXT, ARTICLE, VIDEO, SHORT_VIDEO
+  status      String @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
 
   // Media fields
-  imageUrl    String? // Featured image (keeping original column name for backward compatibility)
-  videoUrl    String?  @map("video_url") // AWS S3 URL for videos
+  imageUrl       String? // Featured image (keeping original column name for backward compatibility)
+  videoUrl       String? @map("video_url") // AWS S3 URL for videos
   videoThumbnail String? @map("video_thumbnail") // Video thumbnail URL
-  videoDuration Int?    @map("video_duration") // Duration in seconds
+  videoDuration  Int?    @map("video_duration") // Duration in seconds
   videoProcessed Boolean @default(false) @map("video_processed") // Processing status
 
   // SEO fields
-  metaTitle       String? @map("meta_title")
-  metaDescription String? @map("meta_description") @db.Text
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description") @db.Text
   tags            String[] @default([]) // Array of tags
   category        String? // Content category
 
   // Article-specific fields
-  readingTime     Int?    @map("reading_time") // Estimated reading time in minutes
-  articleContent  Json?   @map("article_content") // Rich text JSON from Lexical editor
+  readingTime    Int?  @map("reading_time") // Estimated reading time in minutes
+  articleContent Json? @map("article_content") // Rich text JSON from Lexical editor
 
   // Author and relations
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   // Engagement metrics
-  views       Int      @default(0)
-  likes       Int      @default(0)
-  comments    Int      @default(0)
-  shares      Int      @default(0)
-  earnings    Decimal  @default(0)
+  views    Int     @default(0)
+  likes    Int     @default(0)
+  comments Int     @default(0)
+  shares   Int     @default(0)
+  earnings Decimal @default(0)
 
   // Quality Score tracking fields
-  averageScrollDepth      Float?   @default(0) @map("average_scroll_depth") // Average % of content consumed (0-1)
-  averageWatchPercentage  Float?   @default(0) @map("average_watch_percentage") // Average % of video watched (0-1)
-  totalCompletions        Int      @default(0) @map("total_completions") // Count of users who completed >80% of content
-  contentLength           Int?     @default(0) @map("content_length") // Character count for TEXT posts
+  averageScrollDepth     Float? @default(0) @map("average_scroll_depth") // Average % of content consumed (0-1)
+  averageWatchPercentage Float? @default(0) @map("average_watch_percentage") // Average % of video watched (0-1)
+  totalCompletions       Int    @default(0) @map("total_completions") // Count of users who completed >80% of content
+  contentLength          Int?   @default(0) @map("content_length") // Character count for TEXT posts
 
   // Timestamps
-  isPublished Boolean  @default(true) // Legacy field, use status instead
+  isPublished Boolean   @default(true) // Legacy field, use status instead
   publishedAt DateTime? @map("published_at") // When content was published
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Diversity tracking fields
-  diversityScore      Float?   @map("diversity_score")
-  top10Percentage     Float?   @map("top10_percentage")
-  diversityPenalty    Float?   @map("diversity_penalty")
-  lastDiversityCheck  DateTime? @map("last_diversity_check")
+  diversityScore     Float?    @map("diversity_score")
+  top10Percentage    Float?    @map("top10_percentage")
+  diversityPenalty   Float?    @map("diversity_penalty")
+  lastDiversityCheck DateTime? @map("last_diversity_check")
 
   // Relations
-  postLikes   Like[]
+  postLikes    Like[]
   postComments Comment[]
-  videoClips  VideoClip[] // Related video clips/snippets
+  videoClips   VideoClip[] // Related video clips/snippets
   consumptions PostConsumption[] // Track user consumption metrics
 
   @@index([authorId])
@@ -143,35 +143,35 @@ model Post {
 
 // Video Clips - For TikTok/social media snippets
 model VideoClip {
-  id              String   @id @default(cuid())
-  parentPostId    String   @map("parent_post_id")
-  parentPost      Post     @relation(fields: [parentPostId], references: [id], onDelete: Cascade)
+  id           String @id @default(cuid())
+  parentPostId String @map("parent_post_id")
+  parentPost   Post   @relation(fields: [parentPostId], references: [id], onDelete: Cascade)
 
-  title           String
-  description     String?  @db.Text
+  title       String
+  description String? @db.Text
 
   // Clip timing (for reference-only clips)
-  startTime       Int      @map("start_time") // Start time in seconds
-  endTime         Int      @map("end_time") // End time in seconds
+  startTime Int @map("start_time") // Start time in seconds
+  endTime   Int @map("end_time") // End time in seconds
 
   // Processed clip (if server-side export is done)
-  clipUrl         String?  @map("clip_url") // AWS S3 URL for exported clip
-  thumbnailUrl    String?  @map("thumbnail_url")
-  processed       Boolean  @default(false) // Whether clip has been exported
+  clipUrl          String? @map("clip_url") // AWS S3 URL for exported clip
+  thumbnailUrl     String? @map("thumbnail_url")
+  processed        Boolean @default(false) // Whether clip has been exported
   processingStatus String? @map("processing_status") // PENDING, PROCESSING, COMPLETED, FAILED
 
   // Clip metadata
-  aspectRatio     String   @default("9:16") @map("aspect_ratio") // 9:16 for TikTok, 16:9 for YouTube
-  duration        Int // Duration in seconds
-  fileSize        Int?     @map("file_size") // File size in bytes if processed
+  aspectRatio String @default("9:16") @map("aspect_ratio") // 9:16 for TikTok, 16:9 for YouTube
+  duration    Int // Duration in seconds
+  fileSize    Int?   @map("file_size") // File size in bytes if processed
 
   // Engagement
-  views           Int      @default(0)
-  shares          Int      @default(0)
+  views  Int @default(0)
+  shares Int @default(0)
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([parentPostId])
   @@map("video_clips")
@@ -179,20 +179,20 @@ model VideoClip {
 
 // Earnings Tracking
 model Earning {
-  id          String        @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount      Decimal
   source      String
   postId      String?
   description String?
-  txHash      String?       // Blockchain transaction hash when paid
-  isPaid      Boolean       @default(false)
-  createdAt   DateTime      @default(now())
+  txHash      String? // Blockchain transaction hash when paid
+  isPaid      Boolean  @default(false)
+  createdAt   DateTime @default(now())
 
   // Mode system fields
-  heldUntil   DateTime?     @map("held_until")
-  holdReason  String?       @map("hold_reason")
+  heldUntil  DateTime? @map("held_until")
+  holdReason String?   @map("hold_reason")
 
   @@map("earnings")
 }
@@ -214,11 +214,11 @@ model Follow {
 }
 
 model Like {
-  id     String @id @default(cuid())
-  userId String
-  postId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@unique([userId, postId])
@@ -241,24 +241,24 @@ model Comment {
 
 // Post Consumption Tracking - For Quality Score calculation
 model PostConsumption {
-  id                String   @id @default(cuid())
-  postId            String   @map("post_id")
-  userId            String?  @map("user_id") // Nullable to allow anonymous tracking
+  id     String  @id @default(cuid())
+  postId String  @map("post_id")
+  userId String? @map("user_id") // Nullable to allow anonymous tracking
 
   // Consumption metrics
-  scrollDepth       Float?   @map("scroll_depth") // 0-1, how far user scrolled (for articles/text)
-  watchPercentage   Float?   @map("watch_percentage") // 0-1, how much video was watched
-  listenPercentage  Float?   @map("listen_percentage") // 0-1, for audio content (future)
-  timeSpent         Int?     @map("time_spent") // Time spent in seconds
-  completed         Boolean  @default(false) // True if >80% consumed
+  scrollDepth      Float?  @map("scroll_depth") // 0-1, how far user scrolled (for articles/text)
+  watchPercentage  Float?  @map("watch_percentage") // 0-1, how much video was watched
+  listenPercentage Float?  @map("listen_percentage") // 0-1, for audio content (future)
+  timeSpent        Int?    @map("time_spent") // Time spent in seconds
+  completed        Boolean @default(false) // True if >80% consumed
 
   // Metadata
-  sessionId         String?  @map("session_id") // To deduplicate multiple views in same session
-  ipAddress         String?  @map("ip_address") // For fraud detection
-  userAgent         String?  @map("user_agent") // Device info
+  sessionId String? @map("session_id") // To deduplicate multiple views in same session
+  ipAddress String? @map("ip_address") // For fraud detection
+  userAgent String? @map("user_agent") // Device info
 
-  post              Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@index([postId])
   @@index([userId])
@@ -309,15 +309,15 @@ model VerificationToken {
 
 // Beta Application Model - For tracking creator beta applications
 model BetaApplication {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   email       String
-  platform    String   // instagram, tiktok, youtube, twitter, facebook, other
+  platform    String // instagram, tiktok, youtube, twitter, facebook, other
   niche       String
-  posts       Int      // Typical monthly posts
-  engagement  String   // Average post engagement description
-  reason      String   // Why they want to join
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, WAITLIST
+  posts       Int // Typical monthly posts
+  engagement  String // Average post engagement description
+  reason      String // Why they want to join
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED, WAITLIST
   reviewedAt  DateTime?
   reviewNotes String?
 
@@ -326,19 +326,19 @@ model BetaApplication {
   confirmationEmailSentAt DateTime? @map("confirmation_email_sent_at")
   applicationNumber       Int?      @map("application_number") // Sequential number
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("beta_applications")
 }
 
 // Email Verification Tokens
 model EmailVerificationToken {
-  id         String   @id @default(cuid())
-  userId     String
-  token      String   @unique
-  expires    DateTime
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([token])
@@ -398,13 +398,13 @@ model SmsRateLimit {
 
 // Password Reset Tokens
 model PasswordResetToken {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  token     String   @unique
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  token     String    @unique
   expires   DateTime
-  used      Boolean  @default(false)
+  used      Boolean   @default(false)
   usedAt    DateTime? @map("used_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@index([userId])
   @@index([token])
@@ -436,7 +436,7 @@ model CreatorWarning {
 model FlaggedContent {
   id          String    @id @default(cuid())
   contentId   String
-  contentType String    // POST, COMMENT, USER
+  contentType String // POST, COMMENT, USER
   reason      String
   details     Json      @default("{}")
   flaggedAt   DateTime  @default(now())
@@ -454,15 +454,15 @@ model FlaggedContent {
 
 // Profile Image Upload Tracking - Track profile image uploads and moderation
 model ProfileImageUpload {
-  id              String   @id @default(cuid())
-  userId          String   @map("user_id")
-  imageUrl        String   @map("image_url")
-  thumbnailUrl    String?  @map("thumbnail_url")
-  moderationStatus String  @default("PENDING") @map("moderation_status") // PENDING, APPROVED, REJECTED
-  rejectionReason String?  @map("rejection_reason")
-  fileSize        Int      @map("file_size") // bytes
-  mimeType        String   @map("mime_type")
-  createdAt       DateTime @default(now()) @map("created_at")
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  imageUrl         String   @map("image_url")
+  thumbnailUrl     String?  @map("thumbnail_url")
+  moderationStatus String   @default("PENDING") @map("moderation_status") // PENDING, APPROVED, REJECTED
+  rejectionReason  String?  @map("rejection_reason")
+  fileSize         Int      @map("file_size") // bytes
+  mimeType         String   @map("mime_type")
+  createdAt        DateTime @default(now()) @map("created_at")
 
   @@index([userId])
   @@index([moderationStatus])
@@ -471,9 +471,9 @@ model ProfileImageUpload {
 
 // Image Upload Rate Limiting - Prevent abuse of profile image uploads
 model ImageUploadRateLimit {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  uploadedAt  DateTime @default(now()) @map("uploaded_at")
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
 
   @@index([userId])
   @@index([uploadedAt])
@@ -482,20 +482,20 @@ model ImageUploadRateLimit {
 
 // Private Messages - Direct messaging between users
 model Message {
-  id            String    @id @default(cuid())
-  fromUserId    String    @map("from_user_id")
-  toUserId      String    @map("to_user_id")
-  content       String    @db.Text
-  status        String    @default("PENDING") // PENDING, ACCEPTED, DECLINED, READ
+  id         String @id @default(cuid())
+  fromUserId String @map("from_user_id")
+  toUserId   String @map("to_user_id")
+  content    String @db.Text
+  status     String @default("PENDING") // PENDING, ACCEPTED, DECLINED, READ
 
   // Thread tracking
-  threadId      String?   @map("thread_id") // Groups messages in a conversation
-  replyToId     String?   @map("reply_to_id") // For replying to specific messages
+  threadId  String? @map("thread_id") // Groups messages in a conversation
+  replyToId String? @map("reply_to_id") // For replying to specific messages
 
   // Timestamps
-  createdAt     DateTime  @default(now()) @map("created_at")
-  readAt        DateTime? @map("read_at")
-  respondedAt   DateTime? @map("responded_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  readAt      DateTime? @map("read_at")
+  respondedAt DateTime? @map("responded_at")
 
   @@index([fromUserId])
   @@index([toUserId])
