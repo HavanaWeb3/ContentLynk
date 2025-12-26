@@ -36,21 +36,19 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
 
           setUserWalletAddress(storedWallet)
 
-          // Immediately disconnect if wallet doesn't match
+          // Only disconnect if user HAS a stored wallet and it doesn't match
+          // If user has NO stored wallet, allow connection (they're connecting for first time)
           if (isConnected && address && storedWallet) {
             if (address.toLowerCase() !== storedWallet.toLowerCase()) {
-              console.log('⚠️ Wallet mismatch detected on mount - disconnecting')
+              console.log('⚠️ Wallet mismatch detected - user has different wallet stored')
+              console.log('  Connected:', address)
+              console.log('  Stored:', storedWallet)
               disconnect()
               setNftHoldings(null)
               toast.error('Wallet disconnected: This wallet belongs to a different account')
             }
-          } else if (isConnected && address && !storedWallet) {
-            // User has no stored wallet but wagmi shows connected - this is from another user
-            console.log('⚠️ Connected wallet found but user has no stored wallet - disconnecting')
-            disconnect()
-            setNftHoldings(null)
-            toast.error('Wallet disconnected: No wallet associated with this account')
           }
+          // If user has no stored wallet and one is connected, that's OK - they're connecting for first time
         } catch (err) {
           console.error('Error fetching user wallet:', err)
         }
