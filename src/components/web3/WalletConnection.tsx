@@ -24,6 +24,7 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
   const [nftHoldings, setNftHoldings] = useState<NFTHoldings | null>(null)
   const [verificationError, setVerificationError] = useState<string | null>(null)
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(null)
+  const [hasValidated, setHasValidated] = useState(false)
 
   // Fetch user's stored wallet address and validate on mount and session change
   useEffect(() => {
@@ -43,25 +44,37 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
 
           setUserWalletAddress(storedWallet)
 
-          // Only disconnect if user HAS a stored wallet and it doesn't match
-          // If user has NO stored wallet, allow connection (they're connecting for first time)
-          if (isConnected && address && storedWallet) {
-            if (address.toLowerCase() !== storedWallet.toLowerCase()) {
-              console.log('⚠️ Wallet mismatch detected - user has different wallet stored')
+          if (isConnected && address) {
+            // Case 1: User HAS stored wallet but it doesn't match
+            if (storedWallet && address.toLowerCase() !== storedWallet.toLowerCase()) {
+              console.log('⚠️ Wallet mismatch - user has different wallet stored')
               console.log('  Connected:', address)
               console.log('  Stored:', storedWallet)
               disconnect()
               setNftHoldings(null)
               toast.error('Wallet disconnected: This wallet belongs to a different account')
             }
+            // Case 2: User has NO stored wallet AND this is initial validation
+            // This means wallet is leftover from previous user session - disconnect it
+            else if (!storedWallet && !hasValidated && !isVerifying) {
+              console.log('⚠️ Leftover wallet detected from previous session - disconnecting')
+              console.log('  Address:', address)
+              console.log('  User has no stored wallet')
+              disconnect()
+              setNftHoldings(null)
+            }
+            // Case 3: User has NO stored wallet but validation already ran
+            // This means user just clicked "Connect Wallet" - allow it
           }
-          // If user has no stored wallet and one is connected, that's OK - they're connecting for first time
+
+          setHasValidated(true)
         } catch (err) {
           console.error('Error fetching user wallet:', err)
         }
       } else {
         // User logged out, clear wallet state and disconnect
         setUserWalletAddress(null)
+        setHasValidated(false) // Reset for next login
         if (isConnected) {
           console.log('⚠️ No session but wallet connected - disconnecting')
           disconnect()
@@ -71,7 +84,7 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
     }
 
     validateWallet()
-  }, [session?.user?.id, isConnected, address, disconnect, isVerifying])
+  }, [session?.user?.id, isConnected, address, disconnect, isVerifying, hasValidated])
 
   // Additional check when connection state changes
   useEffect(() => {
