@@ -123,39 +123,21 @@ export function MessageDialog({
         {/* Message Input */}
         <div className="space-y-4">
           <textarea
-            onChange={(e) => {
-              console.log('Input received:', e.target.value);
-              setMessage(e.target.value);
-            }}
+            ref={textareaRef}
             value={message}
-            placeholder="TEST - Can you type here?"
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message here..."
+            disabled={isSending || success}
+            maxLength={1000}
+            rows={5}
+            className="flex min-h-[120px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
             style={{
-              width: '100%',
-              minHeight: '120px',
-              padding: '12px',
-              border: '2px solid red',
-              zIndex: 9999,
-              position: 'relative',
-              backgroundColor: 'white',
-              color: 'black',
-              fontSize: '16px',
-              fontFamily: 'monospace',
-              opacity: 1
+              color: '#111827',
+              backgroundColor: '#ffffff'
             }}
           />
           <div className="flex justify-between text-sm text-gray-500">
             <span>{message.length}/1000 characters</span>
-          </div>
-
-          {/* Debug display - shows actual state value */}
-          <div style={{
-            padding: '12px',
-            border: '2px solid blue',
-            backgroundColor: 'yellow',
-            color: 'black',
-            fontFamily: 'monospace'
-          }}>
-            <strong>DEBUG - Actual message value:</strong> "{message}"
           </div>
 
           {/* Error Message */}
