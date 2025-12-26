@@ -97,8 +97,8 @@ export function MessageDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={isOpen} onOpenChange={handleClose} modal={true}>
+      <DialogContent className="sm:max-w-[500px]" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Send Message</DialogTitle>
           <DialogDescription>
@@ -131,6 +131,8 @@ export function MessageDialog({
             disabled={isSending || success}
             className="resize-none"
             maxLength={1000}
+            autoFocus
+            tabIndex={0}
           />
           <div className="flex justify-between text-sm text-gray-500">
             <span>{message.length}/1000 characters</span>
