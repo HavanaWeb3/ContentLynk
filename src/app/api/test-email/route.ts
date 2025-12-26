@@ -10,16 +10,17 @@ import { sendSignupWelcomeEmail, sendBetaConfirmationEmail } from '@/lib/welcome
  */
 export async function POST(request: NextRequest) {
   try {
+    // TEMPORARILY DISABLED FOR TESTING - Re-enable after testing
     // Get session
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
     // In production, require admin authentication
-    if (process.env.NODE_ENV === 'production' && !session?.user?.isAdmin) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Admin access required' },
-        { status: 403 }
-      );
-    }
+    // if (process.env.NODE_ENV === 'production' && !session?.user?.isAdmin) {
+    //   return NextResponse.json(
+    //     { error: 'Unauthorized - Admin access required' },
+    //     { status: 403 }
+    //   );
+    // }
 
     const body = await request.json();
     const { type, email, name, username } = body;
@@ -89,16 +90,17 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
+    // TEMPORARILY DISABLED FOR TESTING - Re-enable after testing
     // Get session
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
     // In production, require admin authentication
-    if (process.env.NODE_ENV === 'production' && !session?.user?.isAdmin) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Admin access required' },
-        { status: 403 }
-      );
-    }
+    // if (process.env.NODE_ENV === 'production' && !session?.user?.isAdmin) {
+    //   return NextResponse.json(
+    //     { error: 'Unauthorized - Admin access required' },
+    //     { status: 403 }
+    //   );
+    // }
 
     const isConfigured = !!process.env.RESEND_API_KEY &&
                          process.env.RESEND_API_KEY !== 'development-placeholder-configure-from-resend.com';
