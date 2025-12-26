@@ -98,7 +98,7 @@ export function MessageDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose} modal={true}>
-      <DialogContent className="sm:max-w-[500px]" onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Send Message</DialogTitle>
           <DialogDescription>
