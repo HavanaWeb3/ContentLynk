@@ -135,11 +135,27 @@ export function MessageDialog({
               padding: '12px',
               border: '2px solid red',
               zIndex: 9999,
-              position: 'relative'
+              position: 'relative',
+              backgroundColor: 'white',
+              color: 'black',
+              fontSize: '16px',
+              fontFamily: 'monospace',
+              opacity: 1
             }}
           />
           <div className="flex justify-between text-sm text-gray-500">
             <span>{message.length}/1000 characters</span>
+          </div>
+
+          {/* Debug display - shows actual state value */}
+          <div style={{
+            padding: '12px',
+            border: '2px solid blue',
+            backgroundColor: 'yellow',
+            color: 'black',
+            fontFamily: 'monospace'
+          }}>
+            <strong>DEBUG - Actual message value:</strong> "{message}"
           </div>
 
           {/* Error Message */}
