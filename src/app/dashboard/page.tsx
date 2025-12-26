@@ -11,6 +11,9 @@ import { WalletConnection } from '@/components/web3/WalletConnection'
 import { NFTHoldings } from '@/lib/nftVerification'
 import { formatEarnings, calculateEarningsWithTier } from '@/lib/earnings'
 import { MembershipTier } from '@/types/membership'
+import { Feed } from '@/components/feed/Feed'
+import { MessagesPanel } from '@/components/messages/MessagesPanel'
+import { MessageDialog } from '@/components/messages/MessageDialog'
 
 interface Post {
   id: string
@@ -41,6 +44,13 @@ export default function Dashboard() {
   const [emailVerified, setEmailVerified] = useState(false)
   const [resendingEmail, setResendingEmail] = useState(false)
   const [resendMessage, setResendMessage] = useState('')
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false)
+  const [selectedRecipient, setSelectedRecipient] = useState<{
+    id: string
+    name: string
+    username: string
+    avatar?: string | null
+  } | null>(null)
 
   const fetchUserPosts = async () => {
     if (!session?.user?.id) return
@@ -146,6 +156,26 @@ export default function Dashboard() {
   const handleMembershipUpdate = (holdings: NFTHoldings) => {
     setMembershipTier(holdings.membershipTier)
     setNftHoldings(holdings)
+  }
+
+  const handleMessageCreator = async (userId: string) => {
+    try {
+      // Fetch user info
+      const response = await fetch(`/api/user/profile?userId=${userId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSelectedRecipient({
+          id: userId,
+          name: data.user.displayName || data.user.username,
+          username: data.user.username,
+          avatar: data.user.avatar,
+        })
+        setMessageDialogOpen(true)
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error)
+      alert('Failed to load user information')
+    }
   }
 
   // Calculate stats based on actual posts
@@ -443,10 +473,33 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Wallet Connection Card (if not connected) */}
-        {/* {!isConnected && (
-          <WalletConnection onMembershipUpdate={handleMembershipUpdate} />
-        )} */}
+        {/* Social Feed and Messages */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Social Feed - Takes 2 columns on large screens */}
+          <div className="lg:col-span-2">
+            <Feed onMessageCreator={handleMessageCreator} />
+          </div>
+
+          {/* Messages Panel - Takes 1 column on large screens */}
+          <div className="lg:col-span-1">
+            <MessagesPanel />
+          </div>
+        </div>
+
+        {/* Message Dialog */}
+        {selectedRecipient && (
+          <MessageDialog
+            isOpen={messageDialogOpen}
+            onClose={() => {
+              setMessageDialogOpen(false)
+              setSelectedRecipient(null)
+            }}
+            recipientId={selectedRecipient.id}
+            recipientName={selectedRecipient.name}
+            recipientUsername={selectedRecipient.username}
+            recipientAvatar={selectedRecipient.avatar}
+          />
+        )}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

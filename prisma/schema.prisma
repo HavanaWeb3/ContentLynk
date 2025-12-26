@@ -468,3 +468,28 @@ model ImageUploadRateLimit {
   @@index([uploadedAt])
   @@map("image_upload_rate_limits")
 }
+
+// Private Messages - Direct messaging between users
+model Message {
+  id            String    @id @default(cuid())
+  fromUserId    String    @map("from_user_id")
+  toUserId      String    @map("to_user_id")
+  content       String    @db.Text
+  status        String    @default("PENDING") // PENDING, ACCEPTED, DECLINED, READ
+
+  // Thread tracking
+  threadId      String?   @map("thread_id") // Groups messages in a conversation
+  replyToId     String?   @map("reply_to_id") // For replying to specific messages
+
+  // Timestamps
+  createdAt     DateTime  @default(now()) @map("created_at")
+  readAt        DateTime? @map("read_at")
+  respondedAt   DateTime? @map("responded_at")
+
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([threadId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("messages")
+}
