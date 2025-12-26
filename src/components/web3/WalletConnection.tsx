@@ -29,6 +29,13 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
   useEffect(() => {
     const validateWallet = async () => {
       if (session?.user?.id) {
+        // Skip validation if NFT verification is in progress
+        // This prevents race condition where we disconnect before wallet is saved
+        if (isVerifying) {
+          console.log('⏳ Skipping validation - NFT verification in progress')
+          return
+        }
+
         try {
           const res = await fetch('/api/user/profile')
           const data = await res.json()
@@ -64,10 +71,15 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
     }
 
     validateWallet()
-  }, [session?.user?.id, isConnected, address, disconnect])
+  }, [session?.user?.id, isConnected, address, disconnect, isVerifying])
 
   // Additional check when connection state changes
   useEffect(() => {
+    // Skip validation if NFT verification is in progress
+    if (isVerifying) {
+      return
+    }
+
     if (isConnected && address && userWalletAddress) {
       // If connected wallet doesn't match user's stored wallet, disconnect
       if (address.toLowerCase() !== userWalletAddress.toLowerCase()) {
@@ -77,7 +89,7 @@ export function WalletConnection({ onMembershipUpdate, showFullCard = true }: Wa
         toast.error('Wallet disconnected: This wallet belongs to a different account')
       }
     }
-  }, [isConnected, address, userWalletAddress, disconnect])
+  }, [isConnected, address, userWalletAddress, disconnect, isVerifying])
 
   // Verify NFT holdings when wallet connects
   useEffect(() => {
