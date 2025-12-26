@@ -58,6 +58,9 @@ export function MessageDialog({
     setError(null);
 
     try {
+      console.log('Sending message to:', recipientId);
+      console.log('Message content:', message.trim());
+
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,10 +70,16 @@ export function MessageDialog({
         }),
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
         const data = await response.json();
+        console.error('Error response:', data);
         throw new Error(data.error || 'Failed to send message');
       }
+
+      const result = await response.json();
+      console.log('Success response:', result);
 
       setSuccess(true);
       setMessage('');
@@ -81,6 +90,7 @@ export function MessageDialog({
         onClose();
       }, 1500);
     } catch (err) {
+      console.error('Send message error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send message');
     } finally {
       setIsSending(false);
