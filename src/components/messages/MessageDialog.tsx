@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,18 @@ export function MessageDialog({
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-focus textarea when dialog opens
+  useEffect(() => {
+    if (isOpen && textareaRef.current) {
+      // Small delay to ensure dialog is fully rendered
+      const timer = setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleSend = async () => {
     if (!message.trim()) {
@@ -111,6 +123,7 @@ export function MessageDialog({
         {/* Message Input */}
         <div className="space-y-4">
           <Textarea
+            ref={textareaRef}
             placeholder="Type your message here..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
