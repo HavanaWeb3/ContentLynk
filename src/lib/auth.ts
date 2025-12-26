@@ -85,6 +85,18 @@ export const authOptions: NextAuthOptions = {
               },
             })
 
+            // Send welcome email immediately (don't await - run in background)
+            const { sendSignupWelcomeEmail } = await import('@/lib/welcome-emails');
+            sendSignupWelcomeEmail(
+              user.id,
+              user.email!,
+              user.username,
+              user.displayName || undefined
+            ).catch(error => {
+              console.error('[Auth] Failed to send welcome email:', error);
+              // Don't fail registration if email fails
+            });
+
             // Send email verification
             const { sendEmailVerification } = await import('@/lib/email-verification');
             await sendEmailVerification(user.id, user.email!);

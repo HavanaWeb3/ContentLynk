@@ -34,6 +34,11 @@ model User {
   phoneVerified   Boolean        @default(false) @map("phone_verified")
   signupIp        String?        @map("signup_ip")
 
+  // Welcome email tracking
+  welcomeEmailSent    Boolean    @default(false) @map("welcome_email_sent")
+  welcomeEmailSentAt  DateTime?  @map("welcome_email_sent_at")
+  betaTesterNumber    Int?       @map("beta_tester_number") // Sequential number (#1 of 1,000)
+
   // Mode system fields
   trustScore      Int?           @default(100) @map("trust_score")
   status          String?        @default("ACTIVE")
@@ -315,6 +320,12 @@ model BetaApplication {
   status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, WAITLIST
   reviewedAt  DateTime?
   reviewNotes String?
+
+  // Confirmation email tracking
+  confirmationEmailSent   Boolean   @default(false) @map("confirmation_email_sent")
+  confirmationEmailSentAt DateTime? @map("confirmation_email_sent_at")
+  applicationNumber       Int?      @map("application_number") // Sequential number
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

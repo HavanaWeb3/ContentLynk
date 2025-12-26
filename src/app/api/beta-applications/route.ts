@@ -50,12 +50,22 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // TODO: Send email notification to admin
-    // await sendEmailNotification(application)
+    // Send confirmation email to applicant (don't await - run in background)
+    const { sendBetaConfirmationEmail } = await import('@/lib/welcome-emails');
+    sendBetaConfirmationEmail(
+      application.id,
+      application.email,
+      application.name,
+      application.platform,
+      application.niche
+    ).catch(error => {
+      console.error('[BetaApplication] Failed to send confirmation email:', error);
+      // Don't fail application if email fails
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Application submitted successfully! We\'ll review it within 48 hours.',
+      message: 'Application submitted successfully! Check your email for confirmation.',
       applicationId: application.id
     }, { status: 201 })
 
