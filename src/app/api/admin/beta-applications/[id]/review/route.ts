@@ -189,7 +189,10 @@ export async function POST(
     } else {
       // REJECTION WORKFLOW
 
-      // 1. Update application status
+      // 1. Generate unique waitlist token for security
+      const waitlistToken = crypto.randomBytes(32).toString('hex');
+
+      // 2. Update application status
       await prisma.betaApplication.update({
         where: { id: params.id },
         data: {
@@ -197,12 +200,13 @@ export async function POST(
           reviewedAt: new Date(),
           reviewedBy: session.user.id,
           reviewNotes: reviewNotes || null,
+          waitlistToken, // Store token for waitlist link
         }
       });
 
-      // 2. Send rejection email
+      // 3. Send rejection email
       const homeUrl = baseUrl;
-      const waitlistUrl = `${baseUrl}/beta`; // Can reapply later
+      const waitlistUrl = `${baseUrl}/api/beta/waitlist?token=${waitlistToken}`; // Functional waitlist link
 
       const htmlContent = renderBetaRejectedEmail({
         name: application.name,

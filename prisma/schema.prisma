@@ -322,6 +322,10 @@ model BetaApplication {
   reviewedBy  String?   @map("reviewed_by") // User ID of admin who reviewed
   reviewNotes String?   @map("review_notes")
 
+  // Waitlist tracking
+  waitlistedAt    DateTime? @map("waitlisted_at") // When they joined waitlist
+  waitlistToken   String?   @unique @map("waitlist_token") // Secure token for joining waitlist
+
   // Confirmation email tracking
   confirmationEmailSent   Boolean   @default(false) @map("confirmation_email_sent")
   confirmationEmailSentAt DateTime? @map("confirmation_email_sent_at")
