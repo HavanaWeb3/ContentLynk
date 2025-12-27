@@ -55,10 +55,11 @@ export default function SignUp() {
       if (result?.error) {
         // More specific error handling
         console.log('Signup error:', result.error)
-        if (result.error.toLowerCase().includes('username') || result.error.includes('letters')) {
+        // Check for specific errors in order of priority
+        if (result.error.includes('already exists')) {
+          setError('This email or username is already registered. Please try signing in or use a different email/username.')
+        } else if (result.error.includes('Username can only contain')) {
           setError('Username must contain only letters, numbers, underscores, and hyphens (no spaces)')
-        } else if (result.error.includes('already exists')) {
-          setError('User already exists with this email or username')
         } else {
           // Show the actual error message from the backend
           setError(result.error)
