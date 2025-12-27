@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface BetaApplication {
   id: string;
@@ -208,14 +209,12 @@ export default function BetaApplicationsTab() {
                       {new Date(app.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <button
-                        onClick={() => {
-                          alert(`Full Application Details:\n\nName: ${app.name}\nEmail: ${app.email}\nPlatform: ${app.platform}\nNiche: ${app.niche}\nMonthly Posts: ${app.posts}\nEngagement: ${app.engagement}\n\nReason for joining:\n${app.reason}`);
-                        }}
+                      <Link
+                        href={`/admin/beta-applications/${app.id}`}
                         className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium"
                       >
-                        View Details
-                      </button>
+                        View Details →
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -226,9 +225,9 @@ export default function BetaApplicationsTab() {
       </div>
 
       {/* Note */}
-      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-        <p className="text-sm text-green-800 dark:text-green-200">
-          <strong>✅ Note:</strong> To update application status, use Prisma Studio or add status update functionality.
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <p className="text-sm text-blue-800 dark:text-blue-200">
+          <strong>ℹ️ How to Review:</strong> Click "View Details →" on any application to see full details and approve/reject with automated emails and user account creation.
         </p>
       </div>
     </div>

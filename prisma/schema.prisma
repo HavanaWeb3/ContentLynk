@@ -318,8 +318,9 @@ model BetaApplication {
   engagement  String // Average post engagement description
   reason      String // Why they want to join
   status      String    @default("PENDING") // PENDING, APPROVED, REJECTED, WAITLIST
-  reviewedAt  DateTime?
-  reviewNotes String?
+  reviewedAt  DateTime? @map("reviewed_at")
+  reviewedBy  String?   @map("reviewed_by") // User ID of admin who reviewed
+  reviewNotes String?   @map("review_notes")
 
   // Confirmation email tracking
   confirmationEmailSent   Boolean   @default(false) @map("confirmation_email_sent")
