@@ -97,9 +97,12 @@ export const authOptions: NextAuthOptions = {
               // Don't fail registration if email fails
             });
 
-            // Send email verification
+            // Send email verification (don't await - run in background)
             const { sendEmailVerification } = await import('@/lib/email-verification');
-            await sendEmailVerification(user.id, user.email!);
+            sendEmailVerification(user.id, user.email!).catch(error => {
+              console.error('[Auth] Failed to send verification email:', error);
+              // Don't fail registration if email verification fails
+            });
 
             return {
               id: user.id,
@@ -153,7 +156,11 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (error) {
           console.error('Auth error:', error)
-          return null
+          // Throw error with message so user sees it instead of generic "CredentialsSignin"
+          if (error instanceof Error) {
+            throw new Error(error.message)
+          }
+          throw new Error('Authentication failed. Please try again.')
         }
       },
     }),
