@@ -65,7 +65,9 @@ export async function sendEmailVerification(userId: string, email: string): Prom
     });
 
     // Create verification link
-    const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+      || (process.env.NODE_ENV === 'production' ? 'https://contentlynk.com' : 'http://localhost:3000');
+    const verificationUrl = `${baseUrl}/verify-email?token=${token}`;
 
     // Send email using Resend
     const htmlTemplate = renderEmailVerificationTemplate({

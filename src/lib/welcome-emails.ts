@@ -57,9 +57,9 @@ export async function sendSignupWelcomeEmail(
     const testerNumber = betaTesterNumber || await calculateBetaTesterNumber();
 
     // Dashboard URL
-    const dashboardUrl = process.env.NEXT_PUBLIC_APP_URL
-      ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
-      : 'https://contentlynk.com/dashboard';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+      || (process.env.NODE_ENV === 'production' ? 'https://contentlynk.com' : 'http://localhost:3000');
+    const dashboardUrl = `${baseUrl}/dashboard`;
 
     // Generate email content
     const htmlContent = renderSignupWelcomeEmail({

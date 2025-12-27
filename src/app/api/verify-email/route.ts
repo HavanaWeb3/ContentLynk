@@ -38,7 +38,9 @@ export async function GET(req: NextRequest) {
 
     // Send welcome email
     if (user?.email) {
-      const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+        || (process.env.NODE_ENV === 'production' ? 'https://contentlynk.com' : 'http://localhost:3000');
+      const dashboardUrl = `${baseUrl}/dashboard`;
 
       const welcomeHtml = renderWelcomeEmailTemplate({
         username: user.username,
