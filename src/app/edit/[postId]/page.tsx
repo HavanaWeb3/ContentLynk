@@ -11,6 +11,7 @@ interface Post {
   title: string | null
   content: string
   imageUrl: string | null
+  contentType: string
   author: {
     username: string
     displayName: string | null
@@ -241,14 +242,14 @@ export default function EditPost() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Share your thoughts, ideas, or stories..."
-                  rows={8}
+                  rows={post.contentType === 'ARTICLE' ? 20 : 8}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                  maxLength={1000}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+                  maxLength={post.contentType === 'ARTICLE' ? undefined : 1000}
                 />
                 <div className="flex justify-between items-center mt-2">
                   <p className="text-sm text-gray-500">
-                    {content.length}/1000 characters
+                    {content.length}{post.contentType === 'ARTICLE' ? '' : '/1000'} characters
                   </p>
                 </div>
               </div>
