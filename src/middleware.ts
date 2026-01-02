@@ -32,9 +32,12 @@ export default withAuth(
 )
 
 // Specify which routes should use this middleware
+// NOTE: Article routes are intentionally NOT included here to allow public access
+// Public routes: /, /[username]/articles/*, /api/posts/*/view, /api/posts/*/comment
 export const config = {
   matcher: [
     '/admin/:path*',
     // Add other protected routes here if needed
+    // Do NOT add article routes - they should remain public
   ],
 }

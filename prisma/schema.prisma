@@ -52,6 +52,8 @@ model User {
   following Follow[]  @relation("UserFollowing")
   likes     Like[]
   comments  Comment[]
+  bookmarks Bookmark[] // Saved articles
+  viewLogs  ViewLog[] // Track article views
 
   // NextAuth.js fields
   accounts Account[]
@@ -91,6 +93,7 @@ model Post {
   // SEO fields
   metaTitle       String?  @map("meta_title")
   metaDescription String?  @map("meta_description") @db.Text
+  metaKeywords    String?  @map("meta_keywords") // SEO keywords
   tags            String[] @default([]) // Array of tags
   category        String? // Content category
 
@@ -103,11 +106,14 @@ model Post {
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   // Engagement metrics
-  views    Int     @default(0)
-  likes    Int     @default(0)
-  comments Int     @default(0)
-  shares   Int     @default(0)
-  earnings Decimal @default(0)
+  views              Int     @default(0)
+  publicViews        Int     @default(0) @map("public_views") // Views from non-authenticated users
+  authenticatedViews Int     @default(0) @map("authenticated_views") // Views from authenticated users
+  totalViews         Int     @default(0) @map("total_views") // Total views (public + authenticated)
+  likes              Int     @default(0)
+  comments           Int     @default(0)
+  shares             Int     @default(0)
+  earnings           Decimal @default(0)
 
   // Quality Score tracking fields
   averageScrollDepth     Float? @default(0) @map("average_scroll_depth") // Average % of content consumed (0-1)
@@ -130,8 +136,10 @@ model Post {
   // Relations
   postLikes    Like[]
   postComments Comment[]
+  bookmarks    Bookmark[] // Saved by users
   videoClips   VideoClip[] // Related video clips/snippets
   consumptions PostConsumption[] // Track user consumption metrics
+  viewLogs     ViewLog[] // Track individual views
 
   @@index([authorId])
   @@index([contentType])
@@ -239,6 +247,20 @@ model Comment {
   @@map("comments")
 }
 
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+  @@map("bookmarks")
+}
+
 // Post Consumption Tracking - For Quality Score calculation
 model PostConsumption {
   id     String  @id @default(cuid())
@@ -265,6 +287,22 @@ model PostConsumption {
   @@index([sessionId])
   @@index([createdAt])
   @@map("post_consumptions")
+}
+
+// View Logs - Track individual article views for analytics
+model ViewLog {
+  id              String   @id @default(cuid())
+  postId          String   @map("post_id")
+  post            Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId          String?  @map("user_id")
+  user            User?    @relation(fields: [userId], references: [id])
+  isAuthenticated Boolean  @default(false) @map("is_authenticated")
+  viewedAt        DateTime @default(now()) @map("viewed_at")
+
+  @@index([postId])
+  @@index([userId])
+  @@index([viewedAt])
+  @@map("view_logs")
 }
 
 // NextAuth.js required models
@@ -508,4 +546,23 @@ model Message {
   @@index([status])
   @@index([createdAt])
   @@map("messages")
+}
+
+// Email Subscribers - Track newsletter/article notification signups
+model EmailSubscriber {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  source            String?   @default("article") // article, footer, popup, etc.
+  isVerified        Boolean   @default(false) @map("is_verified")
+  verificationToken String?   @unique @map("verification_token")
+  isActive          Boolean   @default(true) @map("is_active") // Can unsubscribe
+  unsubscribedAt    DateTime? @map("unsubscribed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("email_subscribers")
 }
