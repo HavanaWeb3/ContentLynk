@@ -331,6 +331,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {/* Article Body */}
               <div className="prose prose-lg max-w-none">
                 {(() => {
+                  // Client-side debug
+                  console.log('Client-side article data:', {
+                    hasContent: !!post.content,
+                    contentLength: post.content?.length || 0,
+                    hasArticleContent: !!post.articleContent,
+                    articleContentType: typeof post.articleContent,
+                    contentPreview: post.content?.substring(0, 100),
+                    articleContentPreview: typeof post.articleContent === 'string' ? post.articleContent.substring(0, 100) : 'not string'
+                  });
+
                   // Scenario 1: articleContent exists and is a string (HTML)
                   if (post.articleContent && typeof post.articleContent === 'string') {
                     return (
