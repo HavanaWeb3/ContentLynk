@@ -91,7 +91,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       status: 'PUBLISHED',
       author: { username },
     },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      articleContent: true,
+      slug: true,
+      excerpt: true,
+      imageUrl: true,
+      category: true,
+      tags: true,
+      metaTitle: true,
+      metaDescription: true,
+      readingTime: true,
+      totalViews: true,
+      likes: true,
+      shares: true,
+      publishedAt: true,
+      createdAt: true,
       author: {
         select: {
           id: true,
