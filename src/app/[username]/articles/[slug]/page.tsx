@@ -122,6 +122,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
+  // Debug: Check what we have
+  console.log('Post data:', {
+    hasArticleContent: !!post.articleContent,
+    articleContentType: typeof post.articleContent,
+    contentLength: post.content?.length,
+    articleContentPreview: typeof post.articleContent === 'string' ? post.articleContent.substring(0, 100) : JSON.stringify(post.articleContent).substring(0, 100)
+  })
+
   // Check if user has liked or bookmarked this post
   let isLiked = false
   let isBookmarked = false
