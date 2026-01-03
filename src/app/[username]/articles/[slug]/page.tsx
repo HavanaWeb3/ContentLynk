@@ -338,7 +338,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             <div
                               className="whitespace-pre-wrap"
                               dangerouslySetInnerHTML={{
-                                __html: text.split('\n\n').map(p => `<p>${p}</p>`).join('')
+                                __html: text.split('\n\n').map((p: string) => `<p>${p}</p>`).join('')
                               }}
                             />
                           );
@@ -363,8 +363,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                       // Plain text - convert to HTML with paragraphs
                       const htmlContent = post.content
                         .split('\n\n')
-                        .filter(p => p.trim())
-                        .map(para => `<p>${para.replace(/\n/g, '<br/>')}</p>`)
+                        .filter((p: string) => p.trim())
+                        .map((para: string) => `<p>${para.replace(/\n/g, '<br/>')}</p>`)
                         .join('');
 
                       return (
