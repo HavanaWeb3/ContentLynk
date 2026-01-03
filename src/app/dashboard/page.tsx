@@ -19,6 +19,8 @@ interface Post {
   id: string
   title: string | null
   content: string
+  slug: string | null
+  contentType: string
   imageUrl: string | null
   createdAt: string
   views: number
@@ -151,6 +153,28 @@ export default function Dashboard() {
 
   const handleEditPost = (postId: string) => {
     router.push(`/edit/${postId}`)
+  }
+
+  const getPostPublicUrl = (post: Post) => {
+    if (!post.slug) return null
+
+    const username = post.author.username
+
+    // Determine the route based on content type
+    if (post.contentType === 'ARTICLE') {
+      return `/${username}/articles/${post.slug}`
+    } else if (post.contentType === 'VIDEO') {
+      return `/${username}/videos/${post.slug}`
+    }
+
+    return null
+  }
+
+  const handleViewPost = (post: Post) => {
+    const url = getPostPublicUrl(post)
+    if (url) {
+      router.push(url)
+    }
   }
 
   const handleMembershipUpdate = (holdings: NFTHoldings) => {
@@ -412,6 +436,20 @@ export default function Dashboard() {
                             </p>
                           </div>
                           <div className="flex items-center space-x-2 ml-4">
+                            {getPostPublicUrl(post) && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleViewPost(post)}
+                                className="text-green-600 border-green-200 hover:bg-green-50"
+                              >
+                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="outline"
