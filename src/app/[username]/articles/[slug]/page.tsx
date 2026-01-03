@@ -179,6 +179,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         day: 'numeric',
       })
 
+  // Extract article HTML content
+  let articleHtmlContent = '<p>No content available.</p>';
+  if (post.articleContent) {
+    if (typeof post.articleContent === 'string') {
+      articleHtmlContent = post.articleContent;
+    } else {
+      // Prisma Json type - try to extract as string
+      articleHtmlContent = String(post.articleContent);
+    }
+  } else if (post.content) {
+    articleHtmlContent = post.content;
+  }
+
   // Transform comments for CommentSection component
   const transformedComments = post.postComments.map((comment) => ({
     id: comment.id,
@@ -321,11 +334,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {/* Article Body */}
               <div
                 className="prose prose-lg max-w-none article-content"
-                dangerouslySetInnerHTML={{
-                  __html: (typeof post.articleContent === 'string' && post.articleContent)
-                    ? post.articleContent
-                    : post.content || '<p>No content available.</p>'
-                }}
+                dangerouslySetInnerHTML={{ __html: articleHtmlContent }}
               />
             </div>
           </article>
