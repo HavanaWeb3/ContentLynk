@@ -122,14 +122,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  // Debug: Check what we have
-  console.log('Post data:', {
-    hasArticleContent: !!post.articleContent,
-    articleContentType: typeof post.articleContent,
-    contentLength: post.content?.length,
-    articleContentPreview: typeof post.articleContent === 'string' ? post.articleContent.substring(0, 100) : JSON.stringify(post.articleContent).substring(0, 100)
-  })
-
   // Check if user has liked or bookmarked this post
   let isLiked = false
   let isBookmarked = false
@@ -310,12 +302,85 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </div>
 
               {/* Article Body */}
-              <div
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: (typeof post.articleContent === 'string' ? post.articleContent : post.content)
-                }}
-              />
+              <div className="prose prose-lg max-w-none">
+                {(() => {
+                  // Scenario 1: articleContent exists and is a string (HTML)
+                  if (post.articleContent && typeof post.articleContent === 'string') {
+                    return (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: post.articleContent }}
+                        className="article-content"
+                      />
+                    );
+                  }
+
+                  // Scenario 2: articleContent exists but is JSON/object (Lexical state)
+                  if (post.articleContent && typeof post.articleContent === 'object') {
+                    console.warn('Article content stored as JSON object');
+
+                    // Try to extract text from JSON structure
+                    const jsonContent = post.articleContent as any;
+
+                    // Handle Lexical editor state structure
+                    if (jsonContent.root?.children) {
+                      try {
+                        const extractText = (node: any): string => {
+                          if (node.text) return node.text;
+                          if (node.children) {
+                            return node.children.map(extractText).join('');
+                          }
+                          return '';
+                        };
+
+                        const text = jsonContent.root.children.map(extractText).join('\n\n');
+                        if (text) {
+                          return (
+                            <div
+                              className="whitespace-pre-wrap"
+                              dangerouslySetInnerHTML={{
+                                __html: text.split('\n\n').map(p => `<p>${p}</p>`).join('')
+                              }}
+                            />
+                          );
+                        }
+                      } catch (e) {
+                        console.error('Failed to extract text from JSON:', e);
+                      }
+                    }
+                  }
+
+                  // Scenario 3: Fall back to plain content field
+                  if (post.content) {
+                    // Check if content has HTML tags
+                    const hasHtmlTags = /<[a-z][\s\S]*>/i.test(post.content);
+
+                    if (hasHtmlTags) {
+                      // Content has HTML, render it
+                      return (
+                        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                      );
+                    } else {
+                      // Plain text - convert to HTML with paragraphs
+                      const htmlContent = post.content
+                        .split('\n\n')
+                        .filter(p => p.trim())
+                        .map(para => `<p>${para.replace(/\n/g, '<br/>')}</p>`)
+                        .join('');
+
+                      return (
+                        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                      );
+                    }
+                  }
+
+                  // Scenario 4: No content at all
+                  return (
+                    <div className="bg-gray-50 border border-gray-200 rounded p-8 text-center">
+                      <p className="text-gray-600">No content available for this article.</p>
+                    </div>
+                  );
+                })()}
+              </div>
             </div>
           </article>
 
