@@ -333,7 +333,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
               {/* Article Body */}
               <div
-                className="prose prose-lg max-w-none article-content"
+                className="prose prose-lg max-w-none article-content text-gray-900"
                 dangerouslySetInnerHTML={{ __html: articleHtmlContent }}
               />
             </div>
