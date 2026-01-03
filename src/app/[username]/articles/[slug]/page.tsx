@@ -304,7 +304,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {/* Article Body */}
               <div
                 className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.articleContent || post.content }}
+                dangerouslySetInnerHTML={{
+                  __html: (typeof post.articleContent === 'string' ? post.articleContent : post.content)
+                }}
               />
             </div>
           </article>
