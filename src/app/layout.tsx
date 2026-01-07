@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-  description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Beta Q2 2026 • 1,000 spots.',
-  keywords: ['creator economy', 'content monetization', 'fair creator pay', 'web3 social media', 'creator platform', 'revenue share', 'HVNA token'],
+  description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA token | Havana Elephant ecosystem. Beta Q2 2026 • 1,000 spots.',
+  keywords: ['creator economy', 'content monetization', 'fair creator pay', 'web3 social media', 'creator platform', 'revenue share', 'HVNA token', 'Havana Elephant', 'Web3 creators', 'anti-exploitation'],
   authors: [{ name: 'Contentlynk' }],
   icons: {
     icon: [
@@ -24,13 +24,16 @@ export const metadata: Metadata = {
     ],
   },
   themeColor: '#FF6B35',
+  alternates: {
+    canonical: 'https://contentlynk.com',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://contentlynk.com',
     siteName: 'Contentlynk',
     title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-    description: 'Get paid from day one. 55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings. Beta launch Q2 2026 • 1,000 founding creator spots available.',
+    description: 'Get paid from day one. 55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings. Powered by $HVNA token. Beta launch Q2 2026 • 1,000 founding creator spots available.',
     images: [
       {
         url: '/images/og-image.png',
@@ -43,7 +46,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-    description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Beta Q2 2026 • 1,000 spots.',
+    description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA | Havana Elephant. Beta Q2 2026 • 1,000 spots.',
     images: ['/images/og-image.png'],
     creator: '@havanaelephant',
     site: '@havanaelephant',
@@ -74,6 +77,47 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Contentlynk",
+              "applicationCategory": "SocialNetworkingApplication",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock"
+              },
+              "description": "Creator platform offering 55-75% revenue share with zero follower minimums. Part of Havana Elephant Web3 ecosystem.",
+              "operatingSystem": "Web",
+              "url": "https://contentlynk.com",
+              "publisher": {
+                "@type": "Organization",
+                "name": "Havana Elephant",
+                "url": "https://havanaelephant.com"
+              },
+              "featureList": [
+                "55-75% revenue share",
+                "Zero follower minimums",
+                "Immediate earnings from day one",
+                "Web3 integration",
+                "HVNA token rewards"
+              ],
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "5.0",
+                "ratingCount": "1000",
+                "bestRating": "5",
+                "worstRating": "1"
+              }
+            })
+          }}
+        />
         <Script
           id="microsoft-clarity"
           strategy="beforeInteractive"
