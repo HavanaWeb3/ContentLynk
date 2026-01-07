@@ -7,8 +7,10 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Contentlynk - Creator Economy Reimagined',
-  description: 'The first social platform that pays creators from day one. Zero follower minimums, transparent earnings, powered by $HVNA.',
+  title: '🐘 Contentlynk | Where Creators Actually Get Paid',
+  description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Beta Q2 2026 • 1,000 spots.',
+  keywords: ['creator economy', 'content monetization', 'fair creator pay', 'web3 social media', 'creator platform', 'revenue share', 'HVNA token'],
+  authors: [{ name: 'Contentlynk' }],
   icons: {
     icon: [
       { url: '/images/contentlynk-logo.png', sizes: '32x32', type: 'image/png' },
@@ -18,31 +20,33 @@ export const metadata: Metadata = {
       { url: '/images/contentlynk-logo.png', sizes: '180x180', type: 'image/png' },
     ],
     other: [
-      { rel: 'mask-icon', url: '/images/contentlynk-logo.png', color: '#4f46e5' },
+      { rel: 'mask-icon', url: '/images/contentlynk-logo.png', color: '#FF6B35' },
     ],
   },
+  themeColor: '#FF6B35',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://contentlynk.com',
     siteName: 'Contentlynk',
-    title: 'Contentlynk - Creator Economy Reimagined',
-    description: 'The first social platform that pays creators from day one. 55-75% revenue share, zero follower minimums, powered by Web3 and $HVNA tokens.',
+    title: '🐘 Contentlynk | Where Creators Actually Get Paid',
+    description: 'Get paid from day one. 55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings. Beta launch Q2 2026 • 1,000 founding creator spots available.',
     images: [
       {
-        url: '/images/contentlynk-logo.png',
+        url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Contentlynk - Fair Creator Compensation Platform',
+        alt: 'Contentlynk - 55-75% Revenue Share • Zero Minimums • Immediate Earnings',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Contentlynk - Creator Economy Reimagined',
-    description: 'The first social platform that pays creators from day one. 55-75% revenue share, zero follower minimums.',
-    images: ['/images/contentlynk-logo.png'],
+    title: '🐘 Contentlynk | Where Creators Actually Get Paid',
+    description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Beta Q2 2026 • 1,000 spots.',
+    images: ['/images/og-image.png'],
     creator: '@havanaelephant',
+    site: '@havanaelephant',
   },
   robots: {
     index: true,
