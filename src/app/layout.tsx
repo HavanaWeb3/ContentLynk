@@ -118,9 +118,11 @@ export default function RootLayout({
             })
           }}
         />
+      </head>
+      <body className={inter.className}>
         <Script
           id="microsoft-clarity"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){
@@ -131,8 +133,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-      <body className={inter.className}>
         <ClientProviders>
           {children}
         </ClientProviders>
