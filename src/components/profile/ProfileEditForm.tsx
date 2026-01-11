@@ -118,7 +118,7 @@ export function ProfileEditForm() {
           value={formData.legalName || ''}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 !text-gray-900"
           placeholder="Your full legal name"
         />
         <p className="mt-1 text-sm text-gray-500">
@@ -138,7 +138,7 @@ export function ProfileEditForm() {
           name="displayName"
           value={formData.displayName || ''}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 !text-gray-900"
           placeholder="Your creator name"
           maxLength={50}
         />
@@ -162,7 +162,7 @@ export function ProfileEditForm() {
           onChange={handleChange}
           rows={6}
           maxLength={1000}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none !text-gray-900"
           placeholder="Tell your audience about yourself..."
         />
         <p className="mt-1 text-sm text-gray-500">
