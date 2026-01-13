@@ -127,6 +127,27 @@ export default function BetaPage() {
               </Button>
             </Link>
           </div>
+
+          {/* $HVNA Presale CTA */}
+          <div className="mt-8 flex justify-center">
+            <a
+              href="https://presale.havanaelephant.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group"
+            >
+              <Button
+                size="lg"
+                className="px-10 py-5 text-lg font-bold text-white transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-[0_0_40px_rgba(255,107,53,0.6)]"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6B35 0%, #764ba2 100%)',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                🪙 Get $HVNA Tokens @ €0.01
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
 

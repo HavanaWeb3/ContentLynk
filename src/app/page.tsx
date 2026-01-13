@@ -25,6 +25,9 @@ export default function Home() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-havana-cyan to-havana-orange bg-clip-text text-transparent">Contentlynk</h1>
             </Link>
             <div className="flex items-center space-x-4">
+              <a href="https://havanaelephant.com" target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex">
+                <Button variant="ghost">🐘 Havana Elephant Ecosystem</Button>
+              </a>
               <Link href="/earnings-calculator">
                 <Button variant="ghost">📊 Earnings Calculator</Button>
               </Link>
@@ -77,6 +80,27 @@ export default function Home() {
                 📊 Calculate Your Earnings
               </Button>
             </Link>
+          </div>
+
+          {/* $HVNA Presale CTA */}
+          <div className="mt-8 flex justify-center">
+            <a
+              href="https://presale.havanaelephant.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group"
+            >
+              <Button
+                size="lg"
+                className="px-10 py-5 text-lg font-bold text-white transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-[0_0_40px_rgba(255,107,53,0.6)]"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6B35 0%, #764ba2 100%)',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                💎 Join $HVNA Presale Now
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -281,6 +305,21 @@ export default function Home() {
               <p className="text-havana-cyan-light">
                 The creator-first social platform powered by Web3 and $HVNA tokens.
               </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-havana-orange">Ecosystem</h4>
+              <ul className="space-y-2 text-havana-cyan-light">
+                <li>
+                  <a href="https://havanaelephant.com" target="_blank" rel="noopener noreferrer" className="hover:text-havana-cyan cursor-pointer transition-colors flex items-center gap-2">
+                    🐘 Havana Elephant Web3
+                  </a>
+                </li>
+                <li>
+                  <a href="https://presale.havanaelephant.com" target="_blank" rel="noopener noreferrer" className="hover:text-havana-cyan cursor-pointer transition-colors">
+                    $HVNA Token Presale
+                  </a>
+                </li>
+              </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-havana-orange">Platform</h4>
