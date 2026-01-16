@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-  description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA token | Havana Elephant ecosystem. Beta Q2 2026 • 1,000 spots.',
+  description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA token | Part of havanaelephant.com ecosystem. Beta Q2 2026 • 1,000 spots.',
   keywords: ['creator economy', 'content monetization', 'fair creator pay', 'web3 social media', 'creator platform', 'revenue share', 'HVNA token', 'Havana Elephant', 'Web3 creators', 'anti-exploitation'],
   authors: [{ name: 'Contentlynk' }],
   icons: {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     url: 'https://contentlynk.com',
     siteName: 'Contentlynk',
     title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-    description: 'Get paid from day one. 55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings. Powered by $HVNA token. Beta launch Q2 2026 • 1,000 founding creator spots available.',
+    description: 'Get paid from day one. 55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings. Powered by $HVNA token | Part of havanaelephant.com ecosystem. Beta launch Q2 2026 • 1,000 spots.',
     images: [
       {
         url: '/images/og-image.png',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '🐘 Contentlynk | Where Creators Actually Get Paid',
-    description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA | Havana Elephant. Beta Q2 2026 • 1,000 spots.',
+    description: '55-75% revenue share vs traditional 0-5%. Zero follower minimums. Immediate earnings from day one. Powered by $HVNA | Part of havanaelephant.com ecosystem. Beta Q2 2026 • 1,000 spots.',
     images: ['/images/og-image.png'],
     creator: '@havanaelephant',
     site: '@havanaelephant',

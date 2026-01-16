@@ -566,3 +566,24 @@ model EmailSubscriber {
   @@index([createdAt])
   @@map("email_subscribers")
 }
+
+// User Deletion Log - Audit trail for deleted user accounts
+model UserDeletionLog {
+  id              String   @id @default(cuid())
+  deletedUserId   String   @map("deleted_user_id")
+  deletedEmail    String?  @map("deleted_email")
+  deletedUsername String   @map("deleted_username")
+  wasVerified     Boolean  @map("was_verified")
+  hadActivity     Boolean  @map("had_activity")
+  postsCount      Int      @map("posts_count")
+  followersCount  Int      @map("followers_count")
+  wasMarkedAsBot  Boolean  @map("was_marked_as_bot")
+  deletedBy       String   @map("deleted_by")
+  deletedAt       DateTime @default(now()) @map("deleted_at")
+  reason          String?
+  deletionType    String   @map("deletion_type") // 'bulk_bot' | 'individual' | 'verified'
+
+  @@index([deletedBy])
+  @@index([deletedAt])
+  @@map("user_deletion_logs")
+}
